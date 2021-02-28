@@ -37,7 +37,7 @@ class _MonthWidgetState extends State<MonthWidget> {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.8),
+                color: Color(0xffdadada),
                 spreadRadius: 0,
                 blurRadius: 0,
                 offset: Offset(0, 0), // changes position of shadow

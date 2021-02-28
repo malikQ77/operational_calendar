@@ -17,7 +17,7 @@ class _DayWidgetState extends State<DayWidget> {
 
     var textColor;
     if(widget.day.dayColor == true){
-      textColor = const Color(0xFF02a1e2);
+      textColor = const Color(0xFF00a3e0);
     }else{
       textColor = const Color(0xFF84bd00);
     }
@@ -36,7 +36,7 @@ class _DayWidgetState extends State<DayWidget> {
             topRight: Radius.circular(8.0),
             bottomRight: Radius.circular(8.0),
           ),
-          color: Colors.orangeAccent,
+          color: Color(0xFFf0b323),
         ),
         width: 40,
         height: 35,
@@ -59,7 +59,7 @@ class _DayWidgetState extends State<DayWidget> {
             topRight: Radius.circular(8.0),
             bottomRight: Radius.circular(8.0),
           ),
-          color: Colors.blue,
+          color: Color(0xFF00a3e0),
         ),
         width: 40,
         height: 35,
@@ -82,7 +82,7 @@ class _DayWidgetState extends State<DayWidget> {
             topRight: Radius.circular(8.0),
             bottomRight: Radius.circular(8.0),
           ),
-          color: const Color(0xff643883),
+          color: const Color(0xffc6007e),
         ),
         width: 40,
         height: 35,
@@ -129,7 +129,7 @@ class _DayWidgetState extends State<DayWidget> {
               topRight: Radius.circular(8.0),
               bottomRight: Radius.circular(8.0),
             ),
-            color: const Color(0xffdcdddf),
+            color: const Color(0xffdadada),
           ),
           width: 40,
           height: 35,
@@ -152,7 +152,7 @@ class _DayWidgetState extends State<DayWidget> {
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(10.0),
               ),
-              color : const Color(0xffdcdddf)
+              color : const Color(0xffdadada)
           ),
           padding: EdgeInsets.only(left: 1.3, top: 1.3),
           width: 40,

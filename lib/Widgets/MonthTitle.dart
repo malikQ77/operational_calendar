@@ -71,7 +71,7 @@ class _MonthTitleWidgetState extends State<MonthTitleWidget> {
                                   .padLeft(2, '0') +
                               ')',
                           style: TextStyle(
-                            color: const Color(0xFF02a1e2),
+                            color: const Color(0xFF00a3e0),
                           ),
                         ),
                       ),
@@ -146,7 +146,7 @@ class _MonthTitleWidgetState extends State<MonthTitleWidget> {
                                     .padLeft(2, '0') +
                                 ')',
                             style: TextStyle(
-                              color: const Color(0xFF02a1e2),
+                              color: const Color(0xFF00a3e0),
                             )),
                       ),
                     ],

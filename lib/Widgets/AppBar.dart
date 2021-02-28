@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:aramco_calendar/CoreFunctions/DatesFunctions.dart' as DatesFunctions;
 final Shader linearGradient = LinearGradient(
-  colors: <Color>[const Color(0xFF84bd00), const Color(0xFF02a1e2)],
+  colors: <Color>[const Color(0xFF84bd00), const Color(0xFF00a3e0)],
 ).createShader(Rect.fromLTWH(0.0, 0.0, 80.0, 70.0));
 
 Widget build(context){
@@ -60,7 +60,7 @@ Widget build(context){
                                   fontWeight: FontWeight.w500,
                                   fontFamily: 'Aramco',
                                   fontSize: 11,
-                                  color: const Color(0xFF02a1e2)),
+                                  color: const Color(0xFF00a3e0)),
                             ),
                             Text(
                               '-' +

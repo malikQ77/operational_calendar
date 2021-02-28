@@ -2,18 +2,24 @@ import 'dart:convert';
 
 import 'package:aramco_calendar/Api/DatesApi.dart';
 import 'package:aramco_calendar/CoreFunctions/DatesFunctions.dart';
+import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import 'package:aramco_calendar/Widgets/AppBar.dart' as AppBar;
 import 'package:aramco_calendar/Widgets/Drawer.dart' as Drawer;
 import 'package:aramco_calendar/Widgets/Month.dart' as MonthWidget;
+import 'package:aramco_calendar/Widgets/Login.dart' as Login;
 
 import 'package:aramco_calendar/Models/Month.dart' as MonthModel;
 import 'package:aramco_calendar/Models/Week.dart' as WeekModel;
 import 'package:aramco_calendar/Models/Day.dart' as DayModel;
+
+import 'package:aramco_calendar/Routes/routesHandler.dart' as RoutesHandler;
 
 class HomePage extends StatefulWidget {
   final String title;
@@ -26,6 +32,28 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
+  Animation<double> _animation;
+  AnimationController _animationController;
+
+  bool _isBubbleClicked = false;
+  bool _showAddTask = false;
+  bool _isLogin = true;
+  bool _isPanelOpen = true;
+
+  @override
+  void initState() {
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 260),
+    );
+
+    final curvedAnimation =
+        CurvedAnimation(curve: Curves.easeInOut, parent: _animationController);
+    _animation = Tween<double>(begin: 0, end: 1).animate(curvedAnimation);
+
+    super.initState();
+  }
+
   final _getDates = AsyncMemoizer();
 
   Future getDates() => _getDates.runOnce(() async {
@@ -207,7 +235,8 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        body:
+        body: Stack(
+          children: [
             CustomScrollView(
               slivers: <Widget>[
                 AppBar.build(context),
@@ -264,27 +293,292 @@ class _HomePageState extends State<HomePage>
                                 alignment: Alignment.center,
                                 child: new MonthWidget.MonthWidget(
                                     snapshot.data[i],
-                                    eachDayWeekNumber(getCurrentYear(), i),
+                                    eachDayWeekNumber(getCurrentYear(), i + 1),
                                     colors(i)),
                               )
                           ]);
                     }
                   },
                 ),
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 100,
+                  ),
+                )
               ],
             ),
+            SafeArea(
+              bottom: false,
+              child: Align(
+                alignment: Alignment.center,
+                child: _showAddTask
+                    ? SlidingUpPanel(
+                        minHeight: MediaQuery.of(context).size.height / 2,
+                        maxHeight: MediaQuery.of(context).size.height,
+                        backdropEnabled: true,
+                        backdropOpacity: 0,
+                        defaultPanelState: PanelState.OPEN,
+                        backdropTapClosesPanel: true,
+                        onPanelClosed: () {
+                          setState(() {
+                            _isPanelOpen = false;
+                          });
+                        },
+                        onPanelOpened: () {
+                          setState(() {
+                            _isPanelOpen = true;
+                          });
+                        },
+                        header: Container(
+                            width: MediaQuery.of(context).size.width,
+                            padding: EdgeInsets.only(
+                                left: 5, right: 15, top: 2, bottom: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0xffdadada),
+                                  spreadRadius: 0,
+                                  blurRadius: 0,
+                                  offset: Offset(
+                                      0, 1), // changes position of shadow
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 25,
+                                  child: IconButton(
+                                      icon: Icon(
+                                        Icons.close,
+                                        size: 25,
+                                      ),
+                                      padding:
+                                          EdgeInsets.only(left: 5, right: 5),
+                                      onPressed: () {
+                                        setState(() {
+                                          _showAddTask = false;
+                                        });
+                                      }),
+                                ),
+                                Container(
+                                  width: 70,
+                                  child: RaisedButton(
+                                    color: Color(0xffc6007e),
+                                    onPressed: () {},
+                                    child: Text(
+                                      'Save',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )),
+                        panel: Container(
+                          padding: EdgeInsets.only(top: 80),
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.only(left: 10, right: 10),
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                        color: Color(0xffdadada), width: 1.0),
+                                  ),
+                                ),
+                                child: TextField(
+                                  autofocus: true,
+                                  style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w500),
+                                  decoration: InputDecoration(
+                                    prefixIcon: Icon(
+                                      Icons.drive_file_rename_outline,
+                                      color: Color(0xffdadada),
+                                    ),
+                                    filled: true,
+                                    border: InputBorder.none,
+                                    fillColor: Colors.white,
+                                    hintText: 'Task title',
+                                    hintStyle: TextStyle(fontSize: 15),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(top: 8),
+                                padding: EdgeInsets.only(left: 10, right: 10),
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                        color: Color(0xffdadada), width: 1.0),
+                                  ),
+                                ),
+                                child: TextField(
+                                  style: TextStyle(fontSize: 14),
+                                  decoration: InputDecoration(
+                                    prefixIcon: Icon(
+                                      Icons.description_outlined,
+                                      color: Color(0xffdadada),
+                                    ),
+                                    filled: true,
+                                    border: InputBorder.none,
+                                    fillColor: Colors.white,
+                                    hintText: 'Task description',
+                                    hintStyle: TextStyle(fontSize: 14),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                height: 300,
+                                margin: EdgeInsets.only(top: 8),
+                                padding: EdgeInsets.only(left: 10, right: 10),
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                        color: Color(0xffdadada), width: 1.0),
+                                  ),
+                                ),
+                                child: CalendarDatePicker(
+                                  initialCalendarMode: DatePickerMode.day,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(2021 , 1 , 1), // current year
+                                  lastDate: DateTime(2021 , 12,31), // current year + 2
+                                  currentDate: DateTime.now(),
+                                  onDateChanged: (DateTime newDateTime) {
+                                    print(newDateTime);
+                                  },
+                                ),
+                              ),
+                              Text('Task Time same'),
+                              Text('Task Date must be current date (on click) opens date picker'),
+                              Text('Color'),
+                            ],
+                          ),
+                        ),
+                      )
+                    : Container(),
+              ),
+            )
+          ],
+        ),
+        //Positioned(
+        //                   child: Container(
+        //                     width: MediaQuery.of(context).size.width / 1.1,
+        //                     height: MediaQuery.of(context).size.height / 2,
+        //                     decoration: BoxDecoration(
+        //                       color: Colors.white,
+        //                       borderRadius: BorderRadius.only(
+        //                         topLeft: Radius.circular(15.0),
+        //                         topRight: Radius.circular(15.0),
+        //                         bottomRight: Radius.circular(15.0),
+        //                       ),
+        //                       boxShadow: [
+        //                         BoxShadow(
+        //                           color: Colors.black54,
+        //                           spreadRadius: 0,
+        //                           blurRadius: 3,
+        //                           offset: Offset(0, 1), // changes position of shadow
+        //                         ),
+        //                       ],
+        //                     ),
+        //                     padding: EdgeInsets.all(15),
+        //                     child: Center(
+        //                         child:Text('Add Task')
+        //                     ),
+        //                   )
+        //
         drawer: Theme(
           data: Theme.of(context).copyWith(
             canvasColor: Colors.white,
           ),
           child: Drawer.build(context),
         ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Color(0xFF02a1e2),
-        elevation: 3,
-        child: Icon(Icons.add , color: Colors.white, size: 25,),
-        onPressed: () {},
-      ),
-    );
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+
+        //move it to new file
+        floatingActionButton: _showAddTask
+            ? Container()
+            : FloatingActionBubble(
+                // Menu items
+                isBubbleClicked: _isBubbleClicked,
+                items: <Bubble>[
+                  Bubble(
+                    title: "Reminder",
+                    iconColor: Colors.white,
+                    bubbleColor: Color(0xffc6007e),
+                    icon: Icons.timer_rounded,
+                    titleStyle: TextStyle(fontSize: 12, color: Colors.white),
+                    onPress: () {
+                      setState(() {
+                        _isBubbleClicked = !_isBubbleClicked;
+                      });
+                      _animationController.reverse();
+                      _isLogin
+                          ? null
+                          : Navigator.of(context)
+                              .push(RoutesHandler.route(Login.Login()));
+                    },
+                  ),
+                  Bubble(
+                    title: "Task",
+                    iconColor: Colors.white,
+                    bubbleColor: Color(0xffc6007e),
+                    icon: Icons.assignment_turned_in_outlined,
+                    titleStyle: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white,
+                    ),
+                    onPress: () {
+                      _animationController.reverse();
+                      _isLogin
+                          ? setState(() {
+                              _isBubbleClicked = !_isBubbleClicked;
+                              _showAddTask = true;
+                            })
+                          : Navigator.of(context)
+                              .push(RoutesHandler.route(Login.Login()));
+                    },
+                  ),
+                  Bubble(
+                    title: "Event",
+                    iconColor: Colors.white,
+                    bubbleColor: Color(0xffc6007e),
+                    icon: Icons.event_outlined,
+                    titleStyle: TextStyle(fontSize: 12, color: Colors.white),
+                    onPress: () {
+                      setState(() {
+                        _animationController.reverse();
+                        _isLogin
+                            ? null
+                            : Navigator.of(context)
+                                .push(RoutesHandler.route(Login.Login()));
+                        _isBubbleClicked = !_isBubbleClicked;
+                      });
+                    },
+                  ),
+                ],
+
+                animation: _animation,
+
+                onPress: () {
+                  _animationController.isCompleted
+                      ? _animationController.reverse()
+                      : _animationController.forward();
+
+                  setState(() {
+                    _showAddTask = false;
+                    _isBubbleClicked = !_isBubbleClicked;
+                  });
+                },
+
+                iconColor: Colors.white,
+
+                iconData: _isBubbleClicked ? Icons.close : Icons.add,
+                backGroundColor:
+                    _isBubbleClicked ? Color(0xFF84bd00) : Color(0xffc6007e),
+              ));
   }
 }

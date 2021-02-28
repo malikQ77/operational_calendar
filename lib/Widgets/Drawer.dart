@@ -3,7 +3,7 @@ import 'package:aramco_calendar/CoreFunctions/DatesFunctions.dart' as DatesFunct
 
 
 final Shader linearGradient = LinearGradient(
-  colors: <Color>[const Color(0xFF84bd00), const Color(0xFF02a1e2)],
+  colors: <Color>[const Color(0xFF84bd00), const Color(0xFF00a3e0)],
 ).createShader(Rect.fromLTWH(0.0, 0.0, 80.0, 70.0));
 
 Widget build(context){
@@ -67,7 +67,7 @@ Widget build(context){
                                             fontFamily: 'Aramco',
                                             fontSize: 12,
                                             color: const Color(
-                                                0xFF02a1e2)),
+                                                0xFF00a3e0)),
                                       ),
                                       Text(
                                         '-' +
@@ -101,7 +101,7 @@ Widget build(context){
                 child: Icon(
                   Icons.arrow_right_sharp,
                   size: 15,
-                  color: const Color(0xFF02a1e2),
+                  color: const Color(0xFF00a3e0),
                 ),
                 margin: EdgeInsets.only(right: 8),
               ),
@@ -120,7 +120,7 @@ Widget build(context){
                 child: Icon(
                   Icons.arrow_right_sharp,
                   size: 15,
-                  color: const Color(0xFF02a1e2),
+                  color: const Color(0xFF00a3e0),
                 ),
                 margin: EdgeInsets.only(right: 8),
               ),
@@ -138,7 +138,7 @@ Widget build(context){
                 child: Icon(
                   Icons.arrow_right_sharp,
                   size: 15,
-                  color: const Color(0xFF02a1e2),
+                  color: const Color(0xFF00a3e0),
                 ),
                 margin: EdgeInsets.only(right: 8),
               ),
