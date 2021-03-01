@@ -2,13 +2,14 @@ import 'dart:convert';
 
 import 'package:aramco_calendar/Api/DatesApi.dart';
 import 'package:aramco_calendar/CoreFunctions/DatesFunctions.dart';
+import 'package:aramco_calendar/main.dart';
 import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 
 import 'package:aramco_calendar/Widgets/AppBar.dart' as AppBar;
 import 'package:aramco_calendar/Widgets/Drawer.dart' as Drawer;
@@ -39,6 +40,14 @@ class _HomePageState extends State<HomePage>
   bool _showAddTask = false;
   bool _isLogin = true;
   bool _isPanelOpen = true;
+  bool _datePicker = false;
+  bool _timePicker = false;
+  bool _colorPicker = false;
+
+  dynamic _date = new DateTime.now();
+  dynamic _time =
+      DateFormat.jm().format(new DateTime.now().add(Duration(minutes: 30)));
+  dynamic _color = Colors.lightGreenAccent;
 
   @override
   void initState() {
@@ -48,7 +57,7 @@ class _HomePageState extends State<HomePage>
     );
 
     final curvedAnimation =
-        CurvedAnimation(curve: Curves.easeInOut, parent: _animationController);
+        CurvedAnimation(curve: Curves.slowMiddle, parent: _animationController);
     _animation = Tween<double>(begin: 0, end: 1).animate(curvedAnimation);
 
     super.initState();
@@ -432,29 +441,237 @@ class _HomePageState extends State<HomePage>
                                 ),
                               ),
                               Container(
-                                height: 300,
                                 margin: EdgeInsets.only(top: 8),
-                                padding: EdgeInsets.only(left: 10, right: 10),
+                                padding: EdgeInsets.only(
+                                    left: 22, right: 22, bottom: 15, top: 7),
                                 decoration: BoxDecoration(
                                   border: Border(
                                     bottom: BorderSide(
                                         color: Color(0xffdadada), width: 1.0),
                                   ),
                                 ),
-                                child: CalendarDatePicker(
-                                  initialCalendarMode: DatePickerMode.day,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime(2021 , 1 , 1), // current year
-                                  lastDate: DateTime(2021 , 12,31), // current year + 2
-                                  currentDate: DateTime.now(),
-                                  onDateChanged: (DateTime newDateTime) {
-                                    print(newDateTime);
-                                  },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.calendar_today_outlined,
+                                            color: Color(0xffdadada)),
+                                        Text(
+                                            DateFormat.yMMMMd()
+                                                .format(_date)
+                                                .toString(),
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500)),
+                                        Container(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                _datePicker = !_datePicker;
+                                                _timePicker = false;
+                                                _colorPicker = false;
+                                              });
+                                            },
+                                            child: Text(
+                                              _datePicker ? 'Done' : 'Change',
+                                              style: TextStyle(
+                                                  color: Color(0xffc6007e)),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    _datePicker
+                                        ? Theme(
+                                            data: ThemeData.from(
+                                                colorScheme: ColorScheme.light(
+                                                    primary:
+                                                        Color(0xffc6007e))),
+                                            child: CalendarDatePicker(
+                                              initialCalendarMode:
+                                                  DatePickerMode.day,
+                                              initialDate: _date,
+                                              firstDate: DateTime(2021, 1, 1),
+                                              // current year
+                                              lastDate: DateTime(2021, 12, 31),
+                                              // current year + 2
+                                              currentDate: DateTime.now(),
+                                              onDateChanged:
+                                                  (DateTime newDateTime) {
+                                                setState(() {
+                                                  _date = newDateTime;
+                                                });
+                                              },
+                                            ))
+                                        : Container(),
+                                  ],
                                 ),
                               ),
-                              Text('Task Time same'),
-                              Text('Task Date must be current date (on click) opens date picker'),
-                              Text('Color'),
+                              Container(
+                                margin: EdgeInsets.only(top: 8),
+                                padding: EdgeInsets.only(
+                                    left: 22, right: 22, bottom: 15, top: 7),
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                        color: Color(0xffdadada), width: 1.0),
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.access_time_outlined,
+                                            color: Color(0xffdadada)),
+                                        Text(_time.toString(),
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500)),
+                                        Container(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                _datePicker = false;
+                                                _colorPicker = false;
+                                                _timePicker = !_timePicker;
+                                              });
+                                            },
+                                            child: Text(
+                                              _timePicker ? 'Done' : 'Change',
+                                              style: TextStyle(
+                                                  color: Color(0xffc6007e)),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    _timePicker
+                                        ? Container(
+                                            height: 150,
+                                            margin: EdgeInsets.only(top: 10),
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                1.1,
+                                            child: CupertinoTheme(
+                                              data: CupertinoThemeData(
+                                                textTheme:
+                                                    CupertinoTextThemeData(
+                                                  dateTimePickerTextStyle:
+                                                      TextStyle(
+                                                    fontSize: 15,
+                                                  ),
+                                                ),
+                                              ),
+                                              child: CupertinoDatePicker(
+                                                mode: CupertinoDatePickerMode
+                                                    .time,
+                                                initialDateTime: DateTime.now(),
+                                                onDateTimeChanged:
+                                                    (DateTime newDateTime) {
+                                                  setState(() {
+                                                    _time = DateFormat.jm()
+                                                        .format(newDateTime);
+                                                  });
+                                                },
+                                                use24hFormat: false,
+                                                minuteInterval: 1,
+                                              ),
+                                            ))
+                                        : Container(),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(top: 8),
+                                padding: EdgeInsets.only(
+                                    left: 22, right: 22, bottom: 15, top: 7),
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                        color: Color(0xffdadada), width: 1.0),
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.color_lens_outlined,
+                                            color: Color(0xffdadada)),
+                                        Container(
+                                          color: _color,
+                                          width: 60,
+                                          height: 30,
+                                        ),
+                                        Container(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                _datePicker = false;
+                                                _timePicker = false;
+                                                _colorPicker = !_colorPicker;
+                                              });
+                                            },
+                                            child: Text(
+                                              _colorPicker ? 'Done' : 'Change',
+                                              style: TextStyle(
+                                                  color: Color(0xffc6007e)),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    _colorPicker
+                                        ? Container(
+                                            height: 140,
+                                            margin: EdgeInsets.only(top: 10),
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                1.1,
+                                            child: MaterialColorPicker(
+                                              onMainColorChange: (color) {
+                                                setState(() {
+                                                  _color = color;
+                                                });
+                                              },
+                                              selectedColor: _color,
+                                              allowShades: false,
+                                              circleSize: 50,
+                                              elevation: 0,
+                                              colors: [
+                                                Colors.deepOrange,
+                                                Colors.yellow,
+                                                Colors.lightGreen,
+                                                Colors.redAccent,
+                                                Colors.pink,
+                                                Colors.brown,
+                                                Colors.blueGrey,
+                                                Colors.tealAccent,
+                                                Colors.lime,
+                                                Colors.purple
+                                              ],
+                                            ))
+                                        : Container(),
+                                  ],
+                                ),
+                              )
                             ],
                           ),
                         ),
@@ -464,32 +681,6 @@ class _HomePageState extends State<HomePage>
             )
           ],
         ),
-        //Positioned(
-        //                   child: Container(
-        //                     width: MediaQuery.of(context).size.width / 1.1,
-        //                     height: MediaQuery.of(context).size.height / 2,
-        //                     decoration: BoxDecoration(
-        //                       color: Colors.white,
-        //                       borderRadius: BorderRadius.only(
-        //                         topLeft: Radius.circular(15.0),
-        //                         topRight: Radius.circular(15.0),
-        //                         bottomRight: Radius.circular(15.0),
-        //                       ),
-        //                       boxShadow: [
-        //                         BoxShadow(
-        //                           color: Colors.black54,
-        //                           spreadRadius: 0,
-        //                           blurRadius: 3,
-        //                           offset: Offset(0, 1), // changes position of shadow
-        //                         ),
-        //                       ],
-        //                     ),
-        //                     padding: EdgeInsets.all(15),
-        //                     child: Center(
-        //                         child:Text('Add Task')
-        //                     ),
-        //                   )
-        //
         drawer: Theme(
           data: Theme.of(context).copyWith(
             canvasColor: Colors.white,

@@ -124,24 +124,6 @@ Widget build(context){
                 ),
                 margin: EdgeInsets.only(right: 8),
               ),
-              Text('Add New Event'),
-            ],
-          ),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
-        ListTile(
-          title: Row(
-            children: [
-              Container(
-                child: Icon(
-                  Icons.arrow_right_sharp,
-                  size: 15,
-                  color: const Color(0xFF00a3e0),
-                ),
-                margin: EdgeInsets.only(right: 8),
-              ),
               Text('Privacy Policy'),
             ],
           ),
