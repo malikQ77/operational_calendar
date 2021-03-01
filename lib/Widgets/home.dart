@@ -2,25 +2,22 @@ import 'dart:convert';
 
 import 'package:aramco_calendar/Api/DatesApi.dart';
 import 'package:aramco_calendar/CoreFunctions/DatesFunctions.dart';
-import 'package:aramco_calendar/main.dart';
-import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 import 'package:intl/intl.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 
 import 'package:aramco_calendar/Widgets/AppBar.dart' as AppBar;
 import 'package:aramco_calendar/Widgets/Drawer.dart' as Drawer;
 import 'package:aramco_calendar/Widgets/Month.dart' as MonthWidget;
-import 'package:aramco_calendar/Widgets/Login.dart' as Login;
 
 import 'package:aramco_calendar/Models/Month.dart' as MonthModel;
 import 'package:aramco_calendar/Models/Week.dart' as WeekModel;
 import 'package:aramco_calendar/Models/Day.dart' as DayModel;
 
-import 'package:aramco_calendar/Routes/routesHandler.dart' as RoutesHandler;
+import 'package:aramco_calendar/Widgets/FloatingActionButton.dart' as FloatingActionButton;
+import 'package:aramco_calendar/Widgets/AddTaskPanel.dart' as AddTaskPanel;
+
 
 class HomePage extends StatefulWidget {
   final String title;
@@ -33,33 +30,33 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  Animation<double> _animation;
-  AnimationController _animationController;
 
-  bool _isBubbleClicked = false;
+
   bool _showAddTask = false;
   bool _isLogin = true;
-  bool _isPanelOpen = true;
-  bool _datePicker = false;
-  bool _timePicker = false;
-  bool _colorPicker = false;
 
-  dynamic _date = new DateTime.now();
-  dynamic _time =
-      DateFormat.jm().format(new DateTime.now().add(Duration(minutes: 30)));
-  dynamic _color = Colors.lightGreenAccent;
+
+  dynamic FloatingActionButtonAndBubbles;
+  dynamic AddTaskPanelWidget;
+  void callback_FloatingActionButton(bool isLogin , showAddTask) {
+    setState(() {
+      this._isLogin = isLogin;
+      this._showAddTask = showAddTask;
+    });
+  }
+
+  void callback_AddTaskPanel(bool showAddTask){
+    setState(() {
+      this._showAddTask = showAddTask;
+    });
+  }
+
+
 
   @override
   void initState() {
-    _animationController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 260),
-    );
-
-    final curvedAnimation =
-        CurvedAnimation(curve: Curves.slowMiddle, parent: _animationController);
-    _animation = Tween<double>(begin: 0, end: 1).animate(curvedAnimation);
-
+    FloatingActionButtonAndBubbles = FloatingActionButton.FloatingActionButton(this.callback_FloatingActionButton);
+    AddTaskPanelWidget = AddTaskPanel.AddTaskPanel(this.callback_AddTaskPanel);
     super.initState();
   }
 
@@ -263,8 +260,8 @@ class _HomePageState extends State<HomePage>
                               children: [
                                 new Icon(Icons.error_outlined,
                                     size: 100,
-                                    color: const Color(0xFF84bd00)
-                                        .withOpacity(0.4)),
+                                    color: const Color(0xffc6007e)
+                                        .withOpacity(0.7)),
                                 new SizedBox(
                                   height: 10,
                                 ),
@@ -321,361 +318,7 @@ class _HomePageState extends State<HomePage>
               child: Align(
                 alignment: Alignment.center,
                 child: _showAddTask
-                    ? SlidingUpPanel(
-                        minHeight: MediaQuery.of(context).size.height / 2,
-                        maxHeight: MediaQuery.of(context).size.height,
-                        backdropEnabled: true,
-                        backdropOpacity: 0,
-                        defaultPanelState: PanelState.OPEN,
-                        backdropTapClosesPanel: true,
-                        onPanelClosed: () {
-                          setState(() {
-                            _isPanelOpen = false;
-                          });
-                        },
-                        onPanelOpened: () {
-                          setState(() {
-                            _isPanelOpen = true;
-                          });
-                        },
-                        header: Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: EdgeInsets.only(
-                                left: 5, right: 15, top: 2, bottom: 2),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color(0xffdadada),
-                                  spreadRadius: 0,
-                                  blurRadius: 0,
-                                  offset: Offset(
-                                      0, 1), // changes position of shadow
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 25,
-                                  child: IconButton(
-                                      icon: Icon(
-                                        Icons.close,
-                                        size: 25,
-                                      ),
-                                      padding:
-                                          EdgeInsets.only(left: 5, right: 5),
-                                      onPressed: () {
-                                        setState(() {
-                                          _showAddTask = false;
-                                        });
-                                      }),
-                                ),
-                                Container(
-                                  width: 70,
-                                  child: RaisedButton(
-                                    color: Color(0xffc6007e),
-                                    onPressed: () {},
-                                    child: Text(
-                                      'Save',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )),
-                        panel: Container(
-                          padding: EdgeInsets.only(top: 80),
-                          child: Column(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.only(left: 10, right: 10),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        color: Color(0xffdadada), width: 1.0),
-                                  ),
-                                ),
-                                child: TextField(
-                                  autofocus: true,
-                                  style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w500),
-                                  decoration: InputDecoration(
-                                    prefixIcon: Icon(
-                                      Icons.drive_file_rename_outline,
-                                      color: Color(0xffdadada),
-                                    ),
-                                    filled: true,
-                                    border: InputBorder.none,
-                                    fillColor: Colors.white,
-                                    hintText: 'Task title',
-                                    hintStyle: TextStyle(fontSize: 15),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 8),
-                                padding: EdgeInsets.only(left: 10, right: 10),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        color: Color(0xffdadada), width: 1.0),
-                                  ),
-                                ),
-                                child: TextField(
-                                  style: TextStyle(fontSize: 14),
-                                  decoration: InputDecoration(
-                                    prefixIcon: Icon(
-                                      Icons.description_outlined,
-                                      color: Color(0xffdadada),
-                                    ),
-                                    filled: true,
-                                    border: InputBorder.none,
-                                    fillColor: Colors.white,
-                                    hintText: 'Task description',
-                                    hintStyle: TextStyle(fontSize: 14),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 8),
-                                padding: EdgeInsets.only(
-                                    left: 22, right: 22, bottom: 15, top: 7),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        color: Color(0xffdadada), width: 1.0),
-                                  ),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.calendar_today_outlined,
-                                            color: Color(0xffdadada)),
-                                        Text(
-                                            DateFormat.yMMMMd()
-                                                .format(_date)
-                                                .toString(),
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w500)),
-                                        Container(
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                _datePicker = !_datePicker;
-                                                _timePicker = false;
-                                                _colorPicker = false;
-                                              });
-                                            },
-                                            child: Text(
-                                              _datePicker ? 'Done' : 'Change',
-                                              style: TextStyle(
-                                                  color: Color(0xffc6007e)),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    _datePicker
-                                        ? Theme(
-                                            data: ThemeData.from(
-                                                colorScheme: ColorScheme.light(
-                                                    primary:
-                                                        Color(0xffc6007e))),
-                                            child: CalendarDatePicker(
-                                              initialCalendarMode:
-                                                  DatePickerMode.day,
-                                              initialDate: _date,
-                                              firstDate: DateTime(2021, 1, 1),
-                                              // current year
-                                              lastDate: DateTime(2021, 12, 31),
-                                              // current year + 2
-                                              currentDate: DateTime.now(),
-                                              onDateChanged:
-                                                  (DateTime newDateTime) {
-                                                setState(() {
-                                                  _date = newDateTime;
-                                                });
-                                              },
-                                            ))
-                                        : Container(),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 8),
-                                padding: EdgeInsets.only(
-                                    left: 22, right: 22, bottom: 15, top: 7),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        color: Color(0xffdadada), width: 1.0),
-                                  ),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.access_time_outlined,
-                                            color: Color(0xffdadada)),
-                                        Text(_time.toString(),
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w500)),
-                                        Container(
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                _datePicker = false;
-                                                _colorPicker = false;
-                                                _timePicker = !_timePicker;
-                                              });
-                                            },
-                                            child: Text(
-                                              _timePicker ? 'Done' : 'Change',
-                                              style: TextStyle(
-                                                  color: Color(0xffc6007e)),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    _timePicker
-                                        ? Container(
-                                            height: 150,
-                                            margin: EdgeInsets.only(top: 10),
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                1.1,
-                                            child: CupertinoTheme(
-                                              data: CupertinoThemeData(
-                                                textTheme:
-                                                    CupertinoTextThemeData(
-                                                  dateTimePickerTextStyle:
-                                                      TextStyle(
-                                                    fontSize: 15,
-                                                  ),
-                                                ),
-                                              ),
-                                              child: CupertinoDatePicker(
-                                                mode: CupertinoDatePickerMode
-                                                    .time,
-                                                initialDateTime: DateTime.now(),
-                                                onDateTimeChanged:
-                                                    (DateTime newDateTime) {
-                                                  setState(() {
-                                                    _time = DateFormat.jm()
-                                                        .format(newDateTime);
-                                                  });
-                                                },
-                                                use24hFormat: false,
-                                                minuteInterval: 1,
-                                              ),
-                                            ))
-                                        : Container(),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 8),
-                                padding: EdgeInsets.only(
-                                    left: 22, right: 22, bottom: 15, top: 7),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        color: Color(0xffdadada), width: 1.0),
-                                  ),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.color_lens_outlined,
-                                            color: Color(0xffdadada)),
-                                        Container(
-                                          color: _color,
-                                          width: 60,
-                                          height: 30,
-                                        ),
-                                        Container(
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                _datePicker = false;
-                                                _timePicker = false;
-                                                _colorPicker = !_colorPicker;
-                                              });
-                                            },
-                                            child: Text(
-                                              _colorPicker ? 'Done' : 'Change',
-                                              style: TextStyle(
-                                                  color: Color(0xffc6007e)),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    _colorPicker
-                                        ? Container(
-                                            height: 140,
-                                            margin: EdgeInsets.only(top: 10),
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                1.1,
-                                            child: MaterialColorPicker(
-                                              onMainColorChange: (color) {
-                                                setState(() {
-                                                  _color = color;
-                                                });
-                                              },
-                                              selectedColor: _color,
-                                              allowShades: false,
-                                              circleSize: 50,
-                                              elevation: 0,
-                                              colors: [
-                                                Colors.deepOrange,
-                                                Colors.yellow,
-                                                Colors.lightGreen,
-                                                Colors.redAccent,
-                                                Colors.pink,
-                                                Colors.brown,
-                                                Colors.blueGrey,
-                                                Colors.tealAccent,
-                                                Colors.lime,
-                                                Colors.purple
-                                              ],
-                                            ))
-                                        : Container(),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      )
+                    ? AddTaskPanelWidget
                     : Container(),
               ),
             )
@@ -692,84 +335,7 @@ class _HomePageState extends State<HomePage>
         //move it to new file
         floatingActionButton: _showAddTask
             ? Container()
-            : FloatingActionBubble(
-                // Menu items
-                isBubbleClicked: _isBubbleClicked,
-                items: <Bubble>[
-                  Bubble(
-                    title: "Reminder",
-                    iconColor: Colors.white,
-                    bubbleColor: Color(0xffc6007e),
-                    icon: Icons.timer_rounded,
-                    titleStyle: TextStyle(fontSize: 12, color: Colors.white),
-                    onPress: () {
-                      setState(() {
-                        _isBubbleClicked = !_isBubbleClicked;
-                      });
-                      _animationController.reverse();
-                      _isLogin
-                          ? null
-                          : Navigator.of(context)
-                              .push(RoutesHandler.route(Login.Login()));
-                    },
-                  ),
-                  Bubble(
-                    title: "Task",
-                    iconColor: Colors.white,
-                    bubbleColor: Color(0xffc6007e),
-                    icon: Icons.assignment_turned_in_outlined,
-                    titleStyle: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white,
-                    ),
-                    onPress: () {
-                      _animationController.reverse();
-                      _isLogin
-                          ? setState(() {
-                              _isBubbleClicked = !_isBubbleClicked;
-                              _showAddTask = true;
-                            })
-                          : Navigator.of(context)
-                              .push(RoutesHandler.route(Login.Login()));
-                    },
-                  ),
-                  Bubble(
-                    title: "Event",
-                    iconColor: Colors.white,
-                    bubbleColor: Color(0xffc6007e),
-                    icon: Icons.event_outlined,
-                    titleStyle: TextStyle(fontSize: 12, color: Colors.white),
-                    onPress: () {
-                      setState(() {
-                        _animationController.reverse();
-                        _isLogin
-                            ? null
-                            : Navigator.of(context)
-                                .push(RoutesHandler.route(Login.Login()));
-                        _isBubbleClicked = !_isBubbleClicked;
-                      });
-                    },
-                  ),
-                ],
-
-                animation: _animation,
-
-                onPress: () {
-                  _animationController.isCompleted
-                      ? _animationController.reverse()
-                      : _animationController.forward();
-
-                  setState(() {
-                    _showAddTask = false;
-                    _isBubbleClicked = !_isBubbleClicked;
-                  });
-                },
-
-                iconColor: Colors.white,
-
-                iconData: _isBubbleClicked ? Icons.close : Icons.add,
-                backGroundColor:
-                    _isBubbleClicked ? Color(0xFF84bd00) : Color(0xffc6007e),
-              ));
+            : FloatingActionButtonAndBubbles
+    );
   }
 }
