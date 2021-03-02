@@ -15,9 +15,9 @@ import 'package:aramco_calendar/Models/Month.dart' as MonthModel;
 import 'package:aramco_calendar/Models/Week.dart' as WeekModel;
 import 'package:aramco_calendar/Models/Day.dart' as DayModel;
 
-import 'package:aramco_calendar/Widgets/FloatingActionButton.dart' as FloatingActionButton;
+import 'package:aramco_calendar/Widgets/FloatingActionButton.dart'
+    as FloatingActionButton;
 import 'package:aramco_calendar/Widgets/AddTaskPanel.dart' as AddTaskPanel;
-
 
 class HomePage extends StatefulWidget {
   final String title;
@@ -30,32 +30,29 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-
-
   bool _showAddTask = false;
   bool _isLogin = true;
 
-
   dynamic FloatingActionButtonAndBubbles;
   dynamic AddTaskPanelWidget;
-  void callback_FloatingActionButton(bool isLogin , showAddTask) {
+
+  void callback_FloatingActionButton(bool isLogin, showAddTask) {
     setState(() {
       this._isLogin = isLogin;
       this._showAddTask = showAddTask;
     });
   }
 
-  void callback_AddTaskPanel(bool showAddTask){
+  void callback_AddTaskPanel(bool showAddTask) {
     setState(() {
       this._showAddTask = showAddTask;
     });
   }
 
-
-
   @override
   void initState() {
-    FloatingActionButtonAndBubbles = FloatingActionButton.FloatingActionButton(this.callback_FloatingActionButton);
+    FloatingActionButtonAndBubbles = FloatingActionButton.FloatingActionButton(
+        this.callback_FloatingActionButton);
     AddTaskPanelWidget = AddTaskPanel.AddTaskPanel(this.callback_AddTaskPanel);
     super.initState();
   }
@@ -313,15 +310,10 @@ class _HomePageState extends State<HomePage>
                 )
               ],
             ),
-            SafeArea(
-              bottom: false,
-              child: Align(
-                alignment: Alignment.center,
-                child: _showAddTask
-                    ? AddTaskPanelWidget
-                    : Container(),
-              ),
-            )
+            Align(
+              alignment: Alignment.center,
+              child: _showAddTask ? AddTaskPanelWidget : Container(),
+            ),
           ],
         ),
         drawer: Theme(
@@ -333,9 +325,7 @@ class _HomePageState extends State<HomePage>
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
         //move it to new file
-        floatingActionButton: _showAddTask
-            ? Container()
-            : FloatingActionButtonAndBubbles
-    );
+        floatingActionButton:
+            _showAddTask ? Container() : FloatingActionButtonAndBubbles);
   }
 }

@@ -1,6 +1,5 @@
 import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/material.dart';
-import 'package:async/async.dart';
 import 'package:aramco_calendar/Widgets/Login.dart' as Login;
 import 'package:aramco_calendar/Routes/routesHandler.dart' as RoutesHandler;
 
@@ -26,7 +25,7 @@ class _FloatingActionButtonState extends State<FloatingActionButton>  with Singl
   void initState() {
     _animationController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 260),
+      duration: Duration(milliseconds: 200),
     );
 
     final curvedAnimation =
@@ -46,7 +45,7 @@ class _FloatingActionButtonState extends State<FloatingActionButton>  with Singl
         Bubble(
           title: "Reminder",
           iconColor: Colors.white,
-          bubbleColor: Color(0xffc6007e),
+          bubbleColor: Color(0xFF00a3e0),
           icon: Icons.timer_rounded,
           titleStyle: TextStyle(fontSize: 12, color: Colors.white),
           onPress: () {
@@ -64,7 +63,7 @@ class _FloatingActionButtonState extends State<FloatingActionButton>  with Singl
         Bubble(
           title: "Task",
           iconColor: Colors.white,
-          bubbleColor: Color(0xffc6007e),
+          bubbleColor: Color(0xFF00a3e0),
           icon: Icons.assignment_turned_in_outlined,
           titleStyle: TextStyle(
             fontSize: 12,
@@ -86,7 +85,7 @@ class _FloatingActionButtonState extends State<FloatingActionButton>  with Singl
         Bubble(
           title: "Event",
           iconColor: Colors.white,
-          bubbleColor: Color(0xffc6007e),
+          bubbleColor: Color(0xFF00a3e0),
           icon: Icons.event_outlined,
           titleStyle: TextStyle(fontSize: 12, color: Colors.white),
           onPress: () {
@@ -122,7 +121,7 @@ class _FloatingActionButtonState extends State<FloatingActionButton>  with Singl
 
       iconData: _isBubbleClicked ? Icons.close : Icons.add,
       backGroundColor:
-      _isBubbleClicked ? Color(0xFF84bd00) : Color(0xffc6007e),
+      _isBubbleClicked ? Color(0xFF84bd00) : Color(0xFF00a3e0),
     );
   }
 }
