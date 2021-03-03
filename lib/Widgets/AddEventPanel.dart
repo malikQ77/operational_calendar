@@ -40,12 +40,12 @@ class _AddEventPanelState extends State<AddEventPanel>
 
   double _panelMaxHeight = 300;
   dynamic _date = new DateTime.now();
-  dynamic _time = DateTime.now().add(Duration(minutes: 30));
+  dynamic _time = DateTime.now().add(Duration(hours: 1));
   dynamic _color = Colors.lightGreenAccent;
 
   TextEditingController titleController = TextEditingController();
 
-  bool _taskAdded = false;
+  bool _eventAdded = false;
   bool _isLoading = false;
 
 
@@ -115,7 +115,7 @@ class _AddEventPanelState extends State<AddEventPanel>
       var body = json.decode(res.body);
       if (body['success']) {
         setState(() {
-          _taskAdded = true;
+          _eventAdded = true;
           _showAddEvent = false;
           _isLoading = false;
         });

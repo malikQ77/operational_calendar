@@ -40,12 +40,12 @@ class _AddReminderPanelState extends State<AddReminderPanel>
 
   double _panelMaxHeight = 300;
   dynamic _date = new DateTime.now();
-  dynamic _time = DateTime.now().add(Duration(minutes: 30));
+  dynamic _time = DateTime.now().add(Duration(hours: 1));
   dynamic _color = Colors.lightGreenAccent;
 
   TextEditingController titleController = TextEditingController();
 
-  bool _taskAdded = false;
+  bool _reminderAdded = false;
   bool _isLoading = false;
 
 
@@ -56,7 +56,7 @@ class _AddReminderPanelState extends State<AddReminderPanel>
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Are you sure you want to discard this task?'),
+          title: Text('Are you sure you want to discard this reminder?'),
           content: Container(
             height: 0,
           ),
@@ -98,24 +98,24 @@ class _AddReminderPanelState extends State<AddReminderPanel>
   @override
   Widget build(BuildContext context) {
 
-    void _handleNewTask() async {
+    void _handleNewReminder() async {
       setState(() {
         _isLoading = true;
       });
 
       var data = {
         'user_id': 1,
-        'task_name': titleController.text,
-        'task_color': _color.value,
-        'task_date': _date.toString(),
-        'task_time': _time.toString(),
+        'reminder_name': titleController.text,
+        'reminder_color': _color.value,
+        'reminder_date': _date.toString(),
+        'reminder_time': _time.toString(),
       };
 
-      var res = await CallApi().postData(data, 'api/task');
+      var res = await CallApi().postData(data, 'api/reminder');
       var body = json.decode(res.body);
       if (body['success']) {
         setState(() {
-          _taskAdded = true;
+          _reminderAdded = true;
           _showAddReminder = false;
           _isLoading = false;
         });
@@ -212,7 +212,7 @@ class _AddReminderPanelState extends State<AddReminderPanel>
                       _stepNumber == 3 ? RaisedButton(
                         color: Color(0xFF00a3e0),
                         onPressed: () {
-                          _isLoading ? null : _handleNewTask();
+                          _isLoading ? null : _handleNewReminder();
                         },
                         child: _isLoading
                             ? Container(
@@ -232,7 +232,7 @@ class _AddReminderPanelState extends State<AddReminderPanel>
                           if (_stepNumber != 3) {
                             if (titleController.text.isEmpty) {
                               setState(() {
-                                _errorMsg = 'Task name required';
+                                _errorMsg = 'Reminder name required';
                               });
                             } else if (_stepNumber == 2) {
                               if (_datePicker == false) {

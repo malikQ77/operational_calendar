@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 Route route(dynamic Target) {
   return PageRouteBuilder(
-    transitionDuration: Duration(milliseconds: 500),
+    transitionDuration: Duration(milliseconds: 250),
     pageBuilder: (context, animation, secondaryAnimation) => Target,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = Offset(0.0, 1);

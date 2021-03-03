@@ -40,7 +40,7 @@ class _AddTaskPanelState extends State<AddTaskPanel>
 
   double _panelMaxHeight = 300;
   dynamic _date = new DateTime.now();
-  dynamic _time = DateTime.now().add(Duration(minutes: 30));
+  dynamic _time = DateTime.now().add(Duration(hours: 1));
   dynamic _color = Colors.lightGreenAccent;
 
   TextEditingController titleController = TextEditingController();
