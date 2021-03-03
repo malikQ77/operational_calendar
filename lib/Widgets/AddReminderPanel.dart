@@ -603,7 +603,7 @@ class _AddReminderPanelState extends State<AddReminderPanel>
                               color: Color(0xFF00a3e0).withOpacity(0.5)),
                         ),
                         Text(
-                          'Pick Time',
+                          'Reminder Time:',
                           style: TextStyle(color: Colors.black87),
                         ),
                       ],

@@ -603,7 +603,7 @@ class _AddTaskPanelState extends State<AddTaskPanel>
                               color: Color(0xFF00a3e0).withOpacity(0.5)),
                         ),
                         Text(
-                          'Pick Time',
+                          'Task Time:',
                           style: TextStyle(color: Colors.black87),
                         ),
                       ],
