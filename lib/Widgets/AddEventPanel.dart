@@ -12,20 +12,20 @@ import 'package:aramco_calendar/Widgets/home.dart' as Home;
 import 'package:aramco_calendar/Routes/routesHandler.dart' as RoutesHandler;
 
 
-class AddTaskPanel extends StatefulWidget {
-  Function callback_AddTaskPanel;
+class AddEventPanel extends StatefulWidget {
+  Function callback_AddEventPanel;
 
-  AddTaskPanel(this.callback_AddTaskPanel);
+  AddEventPanel(this.callback_AddEventPanel);
 
   @override
-  _AddTaskPanelState createState() => new _AddTaskPanelState();
+  _AddEventPanelState createState() => new _AddEventPanelState();
 }
 
-class _AddTaskPanelState extends State<AddTaskPanel>
+class _AddEventPanelState extends State<AddEventPanel>
     with SingleTickerProviderStateMixin {
   bool _isPanelOpen = true; // need it ??
   bool _datePicker = false;
-  bool _showAddTask = false;
+  bool _showAddEvent = false;
 
   bool _todayClicked = false;
   bool _tomorrowClicked = false;
@@ -73,9 +73,9 @@ class _AddTaskPanelState extends State<AddTaskPanel>
                     onPressed: () {
                       Navigator.of(context).pop();
                       setState(() {
-                        _showAddTask = false;
+                        _showAddEvent = false;
                       });
-                      this.widget.callback_AddTaskPanel(_showAddTask);
+                      this.widget.callback_AddEventPanel(_showAddEvent);
                     },
                   ),
                 ),
@@ -116,7 +116,7 @@ class _AddTaskPanelState extends State<AddTaskPanel>
       if (body['success']) {
         setState(() {
           _taskAdded = true;
-          _showAddTask = false;
+          _showAddEvent = false;
           _isLoading = false;
         });
         Navigator.of(context).push(RoutesHandler.route(Home.HomePage()));
@@ -177,9 +177,9 @@ class _AddTaskPanelState extends State<AddTaskPanel>
                         _showMyDialog();
                       } else {
                         setState(() {
-                          _showAddTask = false;
+                          _showAddEvent = false;
                         });
-                        this.widget.callback_AddTaskPanel(_showAddTask);
+                        this.widget.callback_AddEventPanel(_showAddEvent);
                       }
                     }),
               ),
@@ -192,23 +192,23 @@ class _AddTaskPanelState extends State<AddTaskPanel>
                       _stepNumber == 1
                           ? Container()
                           : TextButton(
-                              onPressed: () {
-                                if (_stepNumber == 3 && _datePicker == true) {
-                                  setState(() {
-                                    _stepNumber--;
-                                    _panelMaxHeight = 500;
-                                  });
-                                } else {
-                                  setState(() {
-                                    _stepNumber--;
-                                    _panelMaxHeight = 300;
-                                  });
-                                }
-                              },
-                              child: Text(
-                                'Back',
-                                style: TextStyle(color: Color(0xFF00a3e0)),
-                              )),
+                          onPressed: () {
+                            if (_stepNumber == 3 && _datePicker == true) {
+                              setState(() {
+                                _stepNumber--;
+                                _panelMaxHeight = 500;
+                              });
+                            } else {
+                              setState(() {
+                                _stepNumber--;
+                                _panelMaxHeight = 300;
+                              });
+                            }
+                          },
+                          child: Text(
+                            'Back',
+                            style: TextStyle(color: Color(0xFF00a3e0)),
+                          )),
                       _stepNumber == 3 ? RaisedButton(
                         color: Color(0xFF00a3e0),
                         onPressed: () {
@@ -272,9 +272,9 @@ class _AddTaskPanelState extends State<AddTaskPanel>
                           }
                         },
                         child: Text(
-                               'Next',
-                                style: TextStyle(color: Colors.white),
-                              ),
+                          'Next',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ],
                   )),
@@ -312,10 +312,10 @@ class _AddTaskPanelState extends State<AddTaskPanel>
                           color: Color(0xFF02a1e2), width: 1.0),
                     ),
                     fillColor: Colors.white,
-                    hintText: 'Task name',
+                    hintText: 'Event name',
                     contentPadding: EdgeInsets.zero,
                     hintStyle:
-                        TextStyle(fontSize: 18, color: Color(0xffdadada)),
+                    TextStyle(fontSize: 18, color: Color(0xffdadada)),
                   ),
                 ),
               ),
@@ -323,7 +323,7 @@ class _AddTaskPanelState extends State<AddTaskPanel>
               Container(
                 margin: EdgeInsets.only(top: 5),
                 padding:
-                    EdgeInsets.only(left: 22, right: 22, bottom: 15, top: 7),
+                EdgeInsets.only(left: 22, right: 22, bottom: 15, top: 7),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -373,7 +373,7 @@ class _AddTaskPanelState extends State<AddTaskPanel>
                         color: _todayClicked ? Color(0xffdadada) : Colors.white,
                         border: Border(
                           bottom:
-                              BorderSide(color: Color(0xffdadada), width: 0.6),
+                          BorderSide(color: Color(0xffdadada), width: 0.6),
                         ),
                       ),
                       child: TextButton(
@@ -396,7 +396,7 @@ class _AddTaskPanelState extends State<AddTaskPanel>
                                     margin: EdgeInsets.only(right: 5),
                                     child: Icon(Icons.today,
                                         color:
-                                            Color(0xFF00a3e0).withOpacity(0.5)),
+                                        Color(0xFF00a3e0).withOpacity(0.5)),
                                   ),
                                   Text(
                                     'Today',
@@ -422,10 +422,10 @@ class _AddTaskPanelState extends State<AddTaskPanel>
                           left: 22, right: 22, bottom: 0, top: 0),
                       decoration: BoxDecoration(
                         color:
-                            _tomorrowClicked ? Color(0xffdadada) : Colors.white,
+                        _tomorrowClicked ? Color(0xffdadada) : Colors.white,
                         border: Border(
                           bottom:
-                              BorderSide(color: Color(0xffdadada), width: 0.6),
+                          BorderSide(color: Color(0xffdadada), width: 0.6),
                         ),
                       ),
                       child: TextButton(
@@ -448,7 +448,7 @@ class _AddTaskPanelState extends State<AddTaskPanel>
                                     margin: EdgeInsets.only(right: 5),
                                     child: Icon(Icons.date_range_outlined,
                                         color:
-                                            Color(0xFF00a3e0).withOpacity(0.5)),
+                                        Color(0xFF00a3e0).withOpacity(0.5)),
                                   ),
                                   Text(
                                     'Tomorrow',
@@ -474,10 +474,10 @@ class _AddTaskPanelState extends State<AddTaskPanel>
                           left: 22, right: 22, bottom: 0, top: 0),
                       decoration: BoxDecoration(
                         color:
-                            _nextWeekClicked ? Color(0xffdadada) : Colors.white,
+                        _nextWeekClicked ? Color(0xffdadada) : Colors.white,
                         border: Border(
                           bottom:
-                              BorderSide(color: Color(0xffdadada), width: 0.6),
+                          BorderSide(color: Color(0xffdadada), width: 0.6),
                         ),
                       ),
                       child: TextButton(
@@ -500,7 +500,7 @@ class _AddTaskPanelState extends State<AddTaskPanel>
                                     margin: EdgeInsets.only(right: 5),
                                     child: Icon(Icons.next_week_outlined,
                                         color:
-                                            Color(0xFF00a3e0).withOpacity(0.5)),
+                                        Color(0xFF00a3e0).withOpacity(0.5)),
                                   ),
                                   Text(
                                     'Next week',
@@ -527,7 +527,7 @@ class _AddTaskPanelState extends State<AddTaskPanel>
                       decoration: BoxDecoration(
                         border: Border(
                           bottom:
-                              BorderSide(color: Color(0xffdadada), width: 0.6),
+                          BorderSide(color: Color(0xffdadada), width: 0.6),
                         ),
                       ),
                       child: TextButton(
@@ -548,7 +548,7 @@ class _AddTaskPanelState extends State<AddTaskPanel>
                                     margin: EdgeInsets.only(right: 5),
                                     child: Icon(Icons.today_outlined,
                                         color:
-                                            Color(0xFF00a3e0).withOpacity(0.5)),
+                                        Color(0xFF00a3e0).withOpacity(0.5)),
                                   ),
                                   Text(
                                     'Pick date',
@@ -573,7 +573,7 @@ class _AddTaskPanelState extends State<AddTaskPanel>
                 child: Theme(
                     data: ThemeData.from(
                         colorScheme:
-                            ColorScheme.light(primary: Color(0xFF00a3e0))),
+                        ColorScheme.light(primary: Color(0xFF00a3e0))),
                     child: CalendarDatePicker(
                       initialCalendarMode: DatePickerMode.day,
                       initialDate: _date,
@@ -594,7 +594,7 @@ class _AddTaskPanelState extends State<AddTaskPanel>
                 children: [
                   Container(
                     padding:
-                        EdgeInsets.only(left: 22, right: 22, bottom: 0, top: 0),
+                    EdgeInsets.only(left: 22, right: 22, bottom: 0, top: 0),
                     child: Row(
                       children: [
                         Container(

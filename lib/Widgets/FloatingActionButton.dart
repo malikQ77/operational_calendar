@@ -20,6 +20,8 @@ class _FloatingActionButtonState extends State<FloatingActionButton>  with Singl
   bool _isBubbleClicked = false;
   bool _isLogin = true;
   bool _showAddTask = false;
+  bool _showAddEvent = false;
+  bool _showAddReminder = false;
 
   @override
   void initState() {
@@ -54,10 +56,13 @@ class _FloatingActionButtonState extends State<FloatingActionButton>  with Singl
             });
             _animationController.reverse();
             _isLogin
-                ? null
+                ? setState(() {
+              _isBubbleClicked = !_isBubbleClicked;
+              _showAddReminder = true;
+            })
                 : Navigator.of(context)
                 .push(RoutesHandler.route(Login.Login()));
-            this.widget.callback_FloatingActionButton(_isLogin , _showAddTask);
+            this.widget.callback_FloatingActionButton(_isLogin , _showAddTask , _showAddEvent , _showAddReminder);
           },
         ),
         Bubble(
@@ -79,7 +84,7 @@ class _FloatingActionButtonState extends State<FloatingActionButton>  with Singl
                 : Navigator.of(context)
                 .push(RoutesHandler.route(Login.Login()));
 
-            this.widget.callback_FloatingActionButton(_isLogin , _showAddTask);
+            this.widget.callback_FloatingActionButton(_isLogin , _showAddTask , _showAddEvent , _showAddReminder);
           },
         ),
         Bubble(
@@ -92,12 +97,15 @@ class _FloatingActionButtonState extends State<FloatingActionButton>  with Singl
             setState(() {
               _animationController.reverse();
               _isLogin
-                  ? null
+                  ? setState(() {
+                _isBubbleClicked = !_isBubbleClicked;
+                _showAddEvent = true;
+              })
                   : Navigator.of(context)
                   .push(RoutesHandler.route(Login.Login()));
               _isBubbleClicked = !_isBubbleClicked;
             });
-            this.widget.callback_FloatingActionButton(_isLogin , _showAddTask);
+            this.widget.callback_FloatingActionButton(_isLogin , _showAddTask , _showAddEvent , _showAddReminder);
           },
         ),
       ],
@@ -111,10 +119,11 @@ class _FloatingActionButtonState extends State<FloatingActionButton>  with Singl
 
         setState(() {
           _showAddTask = false;
+          _showAddEvent = false;
           _isBubbleClicked = !_isBubbleClicked;
         });
 
-        this.widget.callback_FloatingActionButton(_isLogin , _showAddTask);
+        this.widget.callback_FloatingActionButton(_isLogin , _showAddTask , _showAddEvent , _showAddReminder);
       },
 
       iconColor: Colors.white,
