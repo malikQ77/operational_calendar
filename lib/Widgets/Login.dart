@@ -25,6 +25,6 @@ class _LoginState extends State<Login>
           ),
           centerTitle: true,
         ),
-        body: Center(child: Text('You need to login'),));
+        body: Center(child: Text('Login'),));
   }
 }

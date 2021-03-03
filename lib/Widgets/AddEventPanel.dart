@@ -126,10 +126,10 @@ class _AddEventPanelState extends State<AddEventPanel>
     return new SlidingUpPanel(
       maxHeight: _panelMaxHeight,
       backdropEnabled: true,
-      backdropOpacity: 0.5,
+      backdropOpacity: 0.25,
       borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(20.0),
-        topRight: Radius.circular(20.0),
+        topLeft: Radius.circular(25.0),
+        topRight: Radius.circular(25.0),
       ),
       defaultPanelState: PanelState.OPEN,
       backdropTapClosesPanel: true,

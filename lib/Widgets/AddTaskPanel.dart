@@ -126,10 +126,10 @@ class _AddTaskPanelState extends State<AddTaskPanel>
     return new SlidingUpPanel(
       maxHeight: _panelMaxHeight,
       backdropEnabled: true,
-      backdropOpacity: 0.5,
+      backdropOpacity: 0.25,
       borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(20.0),
-        topRight: Radius.circular(20.0),
+        topLeft: Radius.circular(25.0),
+        topRight: Radius.circular(25.0),
       ),
       defaultPanelState: PanelState.OPEN,
       backdropTapClosesPanel: true,
@@ -577,10 +577,8 @@ class _AddTaskPanelState extends State<AddTaskPanel>
                     child: CalendarDatePicker(
                       initialCalendarMode: DatePickerMode.day,
                       initialDate: _date,
-                      firstDate: DateTime(getCurrentYear(), 1, 1),
-                      // current year
+                      firstDate: DateTime.now(),
                       lastDate: DateTime(getCurrentYear(), 12, 31),
-                      // current year + 2
                       currentDate: DateTime.now(),
                       onDateChanged: (DateTime newDateTime) {
                         setState(() {

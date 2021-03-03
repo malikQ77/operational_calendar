@@ -14,12 +14,16 @@ import 'package:aramco_calendar/Widgets/Month.dart' as MonthWidget;
 import 'package:aramco_calendar/Models/Month.dart' as MonthModel;
 import 'package:aramco_calendar/Models/Week.dart' as WeekModel;
 import 'package:aramco_calendar/Models/Day.dart' as DayModel;
+import 'package:aramco_calendar/Models/Task.dart' as TaskModel;
+import 'package:aramco_calendar/Models/Event.dart' as EventModel;
+import 'package:aramco_calendar/Models/Reminder.dart' as ReminderModel;
 
 import 'package:aramco_calendar/Widgets/FloatingActionButton.dart'
     as FloatingActionButton;
 import 'package:aramco_calendar/Widgets/AddTaskPanel.dart' as AddTaskPanel;
 import 'package:aramco_calendar/Widgets/AddEventPanel.dart' as AddEventPanel;
-import 'package:aramco_calendar/Widgets/AddReminderPanel.dart' as AddReminderPanel;
+import 'package:aramco_calendar/Widgets/AddReminderPanel.dart'
+    as AddReminderPanel;
 
 class HomePage extends StatefulWidget {
   final String title;
@@ -32,7 +36,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-
   bool _showAddTask = false;
   bool _showAddEvent = false;
   bool _showAddReminder = false;
@@ -43,7 +46,8 @@ class _HomePageState extends State<HomePage>
   dynamic AddEventPanelWidget;
   dynamic AddReminderPanelWidget;
 
-  void callback_FloatingActionButton(bool isLogin, showAddTask , showAddEvent , showAddReminder) {
+  void callback_FloatingActionButton(
+      bool isLogin, showAddTask, showAddEvent, showAddReminder) {
     setState(() {
       this._isLogin = isLogin;
       this._showAddTask = showAddTask;
@@ -57,11 +61,13 @@ class _HomePageState extends State<HomePage>
       this._showAddTask = showAddTask;
     });
   }
+
   void callback_AddEventPanel(bool showAddEvent) {
     setState(() {
       this._showAddEvent = showAddEvent;
     });
   }
+
   void callback_AddReminderPanel(bool showAddReminder) {
     setState(() {
       this._showAddReminder = showAddReminder;
@@ -73,8 +79,10 @@ class _HomePageState extends State<HomePage>
     FloatingActionButtonAndBubbles = FloatingActionButton.FloatingActionButton(
         this.callback_FloatingActionButton);
     AddTaskPanelWidget = AddTaskPanel.AddTaskPanel(this.callback_AddTaskPanel);
-    AddEventPanelWidget = AddEventPanel.AddEventPanel(this.callback_AddEventPanel);
-    AddReminderPanelWidget = AddReminderPanel.AddReminderPanel(this.callback_AddReminderPanel);
+    AddEventPanelWidget =
+        AddEventPanel.AddEventPanel(this.callback_AddEventPanel);
+    AddReminderPanelWidget =
+        AddReminderPanel.AddReminderPanel(this.callback_AddReminderPanel);
     super.initState();
   }
 
@@ -83,6 +91,20 @@ class _HomePageState extends State<HomePage>
   Future getDates() => _getDates.runOnce(() async {
         var res = await CallApi().getData('getDates');
         var body = json.decode(res.body);
+
+        var data = {
+          'id': 1,
+        };
+
+        var userTasksRes = await CallApi().postData(data, 'api/getUserTasks');
+        var TasksBody = json.decode(userTasksRes.body);
+
+        var userEventsRes = await CallApi().postData(data, 'api/getUserEvents');
+        var EventsBody = json.decode(userEventsRes.body);
+
+        var userRemindersRes =
+            await CallApi().postData(data, 'api/getUserReminders');
+        var RemindersBody = json.decode(userRemindersRes.body);
 
         List<MonthModel.Month> year = new List<MonthModel.Month>();
 
@@ -94,88 +116,170 @@ class _HomePageState extends State<HomePage>
         final monthsLength = 12;
         List<String> monthNames = monthsName();
 
-        var dayColor = true;
+        var changeDayTextColor = true; // true => blue , false => green
 
-        for (int i = 1; i <= monthsLength; i++) {
-          var date = listOfMonthDate(currentYear, i);
-          var date_H = listOfHijriDatesOfMonth(currentYear, i);
+        for (int i = 1; i < monthsLength; i++) {
+          var monthDates = listOfMonthDate(currentYear, i);
+          var monthHijriDate = listOfHijriDatesOfMonth(currentYear, i);
           var weeks = eachDayWeekNumber(currentYear, i);
-          List<int> WeekNumbers = weeks.toSet().toList();
+          List<int> weekNumbers = weeks.toSet().toList();
           var first_H_month = getFirstHijriNameOfMonth(currentYear, i);
           var second_H_month = getLastHijriNameOfMonth(currentYear, i);
 
           List<WeekModel.Week> monthWeeks = [];
-          for (int j = 0; j < WeekNumbers.length; j++) {
+
+          for (int j = 0; j < weekNumbers.length; j++) {
             List<DayModel.Day> weekDays = [];
-            for (int z = 0; z < date_H.length; z++) {
-              if (weeks[z] == WeekNumbers[j]) {
-                if (date_H[z].hDay == 1) {
-                  dayColor = !dayColor;
+
+            for (int z = 0; z < monthHijriDate.length; z++) {
+              bool isHolidays = false;
+              bool isRescheduledDaysOff = false;
+              bool isNationalDay = false;
+              bool isRamadanDay = false;
+              bool isWeekEndDay = false;
+              List<TaskModel.Task> dayTasks = [];
+              List<EventModel.Event> dayEvents = [];
+              List<ReminderModel.Reminder> dayReminders = [];
+
+              if (weeks[z] == weekNumbers[j]) {
+                if (monthHijriDate[z].hDay == 1) {
+                  changeDayTextColor = !changeDayTextColor;
                 }
                 List<dynamic> tempDates = [];
                 var tempDate = new DateFormat('yyyy-MM-dd')
-                    .format(new DateTime(currentYear, i, date[z]));
-                for (int kj = 0; kj < body.length; kj++) {
-                  if (tempDate.toString() == body[kj]['date'].toString()) {
-                    if (body[kj]['type'] == 'Holidays') {
-                      weekDays.add(new DayModel.Day(
-                          date[z],
-                          date_H[z].hDay,
-                          date_H[z].dayWeName,
-                          date_H[z],
-                          false,
-                          true,
-                          false,
-                          dayColor));
-                      tempDates.add(body[kj]['date']);
-                    } else if (body[kj]['type'] == 'Rescheduled days off') {
-                      weekDays.add(new DayModel.Day(
-                          date[z],
-                          date_H[z].hDay,
-                          date_H[z].dayWeName,
-                          date_H[z],
-                          false,
-                          false,
-                          true,
-                          dayColor));
-                      tempDates.add(body[kj]['date']);
+                    .format(new DateTime(currentYear, i, monthDates[z]));
+
+                for (int y = 0; y < TasksBody.length; y++) {
+                  var tempTaskDate = DateTime.parse(TasksBody[y]['task_date']);
+                  if (tempDate ==
+                      DateFormat('yyyy-MM-dd').format(tempTaskDate)) {
+                    dayTasks.add(new TaskModel.Task(
+                        TasksBody[y]['task_name'],
+                        TasksBody[y]['task_color'],
+                        TasksBody[y]['task_date'],
+                        TasksBody[y]['task_time']));
+                  }
+                }
+
+                for (int y = 0; y < EventsBody.length; y++) {
+                  var tempEventStartDate =
+                      DateTime.parse(EventsBody[y]['event_start_date']);
+                  var tempEventEndDate =
+                      DateTime.parse(EventsBody[y]['event_start_date']);
+                  if (tempDate ==
+                      DateFormat('yyyy-MM-dd').format(tempEventStartDate)) {
+                    dayEvents.add(new EventModel.Event(
+                        EventsBody[y]['event_name'],
+                        EventsBody[y]['event_color'],
+                        EventsBody[y]['event_start_date'],
+                        EventsBody[y]['event_end_date']));
+                  }
+                  if (tempDate ==
+                      DateFormat('yyyy-MM-dd').format(tempEventEndDate)) {
+                    dayEvents.add(new EventModel.Event(
+                        EventsBody[y]['event_name'],
+                        EventsBody[y]['event_color'],
+                        EventsBody[y]['event_start_date'],
+                        EventsBody[y]['event_end_date']));
+                  }
+                }
+
+                for (int y = 0; y < RemindersBody.length; y++) {
+                  var tempReminderDate =
+                      DateTime.parse(RemindersBody[y]['reminder_date']);
+                  if (tempDate ==
+                      DateFormat('yyyy-MM-dd').format(tempReminderDate)) {
+                    dayReminders.add(new ReminderModel.Reminder(
+                        RemindersBody[y]['reminder_name'],
+                        RemindersBody[y]['reminder_color'],
+                        RemindersBody[y]['reminder_date'],
+                        RemindersBody[y]['reminder_time']));
+                  }
+                }
+
+                if (monthHijriDate[z].dayWeName == "Friday" ||
+                    monthHijriDate[z].dayWeName == "Saturday") {
+                  isHolidays = false;
+                  isRescheduledDaysOff = false;
+                  isNationalDay = false;
+                  isRamadanDay = false;
+                  isWeekEndDay = true;
+                }
+                for (int x = 0; x < body.length; x++) {
+                  var tempHolidayDate = DateTime.parse(body[x]['date']);
+                  if (tempDate ==
+                      DateFormat('yyyy-MM-dd').format(tempHolidayDate)) {
+                    if (body[x]['type'] == 'Rescheduled days off') {
+                      isHolidays = false;
+                      isRescheduledDaysOff = true;
+                      isNationalDay = false;
+                      isRamadanDay = false;
+                      isWeekEndDay = false;
+                    }
+                    if (body[x]['type'] == 'Holidays') {
+                      isHolidays = true;
+                      isRescheduledDaysOff = false;
+                      isNationalDay = false;
+                      isRamadanDay = false;
+                      isWeekEndDay = false;
                     }
                   }
                 }
-                if (i == 9 && z == 22) {
-                  weekDays.add(new DayModel.Day(
-                      date[z],
-                      date_H[z].hDay,
-                      date_H[z].dayWeName,
-                      date_H[z],
-                      true,
-                      false,
-                      false,
-                      dayColor));
-                } else {
-                  var tempDate = new DateFormat('yyyy-MM-dd')
-                      .format(new DateTime(currentYear, i, date[z]));
-                  if (!tempDates.contains(tempDate)) {
-                    weekDays.add(new DayModel.Day(
-                        date[z],
-                        date_H[z].hDay,
-                        date_H[z].dayWeName,
-                        date_H[z],
-                        false,
-                        false,
-                        false,
-                        dayColor));
-                  }
+                if (monthHijriDate[z].hMonth == 9) {
+                  isHolidays = false;
+                  isRescheduledDaysOff = false;
+                  isNationalDay = false;
+                  isRamadanDay = true;
+                  isWeekEndDay = false;
                 }
+                if (i == 9 && z == 22) {
+                  isHolidays = false;
+                  isRescheduledDaysOff = false;
+                  isNationalDay = true;
+                  isRamadanDay = false;
+                  isWeekEndDay = false;
+                }
+                weekDays.add(new DayModel.Day(
+                    monthDates[z],
+                    monthHijriDate[z].hDay,
+                    isRescheduledDaysOff
+                        ? 'RescheduledDaysOff'
+                        : isHolidays
+                            ? 'Holidays'
+                            : isNationalDay
+                                ? 'NationalDay'
+                                : isRamadanDay
+                                    ? 'RamadanDay'
+                                    : isWeekEndDay
+                                        ? 'WeekEndDay'
+                                        : 'Normal',
+                    monthHijriDate[z].dayWeName,
+                    monthHijriDate,
+                    isRescheduledDaysOff
+                        ? 0xFFf0b323
+                        : isHolidays
+                            ? 0xFF00a3e0
+                            : isNationalDay
+                                ? 0xffc6007e
+                                : isRamadanDay
+                                    ? 0xFF84bd00
+                                    : isWeekEndDay
+                                        ? 0xffdadada
+                                        : 0xffffffff,
+                    changeDayTextColor ? 0xFF00a3e0 : 0xFF84bd00,
+                    dayTasks,
+                    dayEvents,
+                    dayReminders));
               }
             }
+
             if (weekDays[0].dayName == 'Monday' && weekDays.length < 7) {
               for (int r = 0; r < 1; r++) {
                 if (weekDays.length != 7) {
                   weekDays.insert(
                       0,
-                      new DayModel.Day(
-                          null, null, null, null, false, false, false, null));
+                      new DayModel.Day(null, null, null, null, null, null, null,
+                          null, null, null));
                 }
               }
             } else if (weekDays[0].dayName == 'Tuesday' &&
@@ -184,8 +288,8 @@ class _HomePageState extends State<HomePage>
                 if (weekDays.length != 7) {
                   weekDays.insert(
                       0,
-                      new DayModel.Day(
-                          null, null, null, null, false, false, false, null));
+                      new DayModel.Day(null, null, null, null, null, null, null,
+                          null, null, null));
                 }
               }
             } else if (weekDays[0].dayName == 'Wednesday' &&
@@ -194,8 +298,8 @@ class _HomePageState extends State<HomePage>
                 if (weekDays.length != 7) {
                   weekDays.insert(
                       0,
-                      new DayModel.Day(
-                          null, null, null, null, false, false, false, null));
+                      new DayModel.Day(null, null, null, null, null, null, null,
+                          null, null, null));
                 }
               }
             } else if (weekDays[0].dayName == 'Thursday' &&
@@ -204,8 +308,8 @@ class _HomePageState extends State<HomePage>
                 if (weekDays.length != 7) {
                   weekDays.insert(
                       0,
-                      new DayModel.Day(
-                          null, null, null, null, false, false, false, null));
+                      new DayModel.Day(null, null, null, null, null, null, null,
+                          null, null, null));
                 }
               }
             } else if (weekDays[0].dayName == 'Friday' && weekDays.length < 7) {
@@ -213,8 +317,8 @@ class _HomePageState extends State<HomePage>
                 if (weekDays.length != 7) {
                   weekDays.insert(
                       0,
-                      new DayModel.Day(
-                          null, null, null, null, false, false, false, null));
+                      new DayModel.Day(null, null, null, null, null, null, null,
+                          null, null, null));
                 }
               }
             } else if (weekDays[0].dayName == 'Saturday' &&
@@ -223,8 +327,8 @@ class _HomePageState extends State<HomePage>
                 if (weekDays.length != 7) {
                   weekDays.insert(
                       0,
-                      new DayModel.Day(
-                          null, null, null, null, false, false, false, null));
+                      new DayModel.Day(null, null, null, null, null, null, null,
+                          null, null, null));
                 }
               }
             } else if (weekDays.length < 7) {
@@ -232,14 +336,13 @@ class _HomePageState extends State<HomePage>
                 if (weekDays.length != 7) {
                   weekDays.insert(
                       weekDays.length,
-                      new DayModel.Day(
-                          null, null, null, null, false, false, false, null));
+                      new DayModel.Day(null, null, null, null, null, null, null,
+                          null, null, null));
                 }
               }
             }
-            monthWeeks.add(new WeekModel.Week(WeekNumbers[j], weekDays));
+            monthWeeks.add(new WeekModel.Week(weekNumbers[j], weekDays));
           }
-
           year.add(new MonthModel.Month(monthNames[i - 1], i, first_H_month,
               second_H_month, monthWeeks, firstHijryYear, secondHijryYear));
         }
@@ -333,8 +436,13 @@ class _HomePageState extends State<HomePage>
           ),
           Align(
             alignment: Alignment.center,
-            child:
-            _showAddEvent ? AddEventPanelWidget : _showAddTask ? AddTaskPanelWidget : _showAddReminder ? AddReminderPanelWidget : Container(),
+            child: _showAddEvent
+                ? AddEventPanelWidget
+                : _showAddTask
+                    ? AddTaskPanelWidget
+                    : _showAddReminder
+                        ? AddReminderPanelWidget
+                        : Container(),
           ),
         ],
       ),
@@ -345,9 +453,9 @@ class _HomePageState extends State<HomePage>
         child: Drawer.build(context),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton:
-          _showAddTask || _showAddEvent || _showAddReminder ? Container() : FloatingActionButtonAndBubbles,
-
+      floatingActionButton: _showAddTask || _showAddEvent || _showAddReminder
+          ? Container()
+          : FloatingActionButtonAndBubbles,
     );
   }
 }

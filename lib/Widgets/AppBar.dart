@@ -32,10 +32,11 @@ Widget build(context){
                 margin: EdgeInsets.only(top: 25, left: 10),
               ),
               Container(
-                margin: EdgeInsets.only(top: 20),
+                margin: EdgeInsets.only(top: 22),
                 child: Stack(
                   children: [
                     Container(
+                      margin: EdgeInsets.only(top: 4),
                       child: Text(
                         'operational calendar',
                         style: TextStyle(
@@ -46,7 +47,7 @@ Widget build(context){
                     ),
                     Container(
                         margin: EdgeInsets.only(
-                          top: 13,
+                          top: 15,
                         ),
                         child: Row(
                           children: [
