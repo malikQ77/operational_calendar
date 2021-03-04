@@ -1,7 +1,7 @@
 
 class Reminder {
   String reminderName;
-  String reminderColor;
+  int reminderColor;
   String reminderDate;
   String reminderTime;
 

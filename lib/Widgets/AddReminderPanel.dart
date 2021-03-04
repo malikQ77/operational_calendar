@@ -577,7 +577,7 @@ class _AddReminderPanelState extends State<AddReminderPanel>
                     child: CalendarDatePicker(
                       initialCalendarMode: DatePickerMode.day,
                       initialDate: _date,
-                      firstDate: DateTime(getCurrentYear(), 1, 1),
+                      firstDate: DateTime.now(),
                       // current year
                       lastDate: DateTime(getCurrentYear(), 12, 31),
                       // current year + 2

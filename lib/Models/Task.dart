@@ -1,7 +1,7 @@
 
 class Task {
   String taskName;
-  String taskColor;
+  int taskColor;
   String taskDate;
   String taskTime;
 

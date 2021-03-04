@@ -232,7 +232,7 @@ class _AddEventPanelState extends State<AddEventPanel>
                           if (_stepNumber != 3) {
                             if (titleController.text.isEmpty) {
                               setState(() {
-                                _errorMsg = 'Task name required';
+                                _errorMsg = 'Event name required';
                               });
                             } else if (_stepNumber == 2) {
                               if (_datePicker == false) {

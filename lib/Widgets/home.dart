@@ -25,9 +25,9 @@ import 'package:aramco_calendar/Widgets/AddEventPanel.dart' as AddEventPanel;
 import 'package:aramco_calendar/Widgets/AddReminderPanel.dart'
     as AddReminderPanel;
 
+
 class HomePage extends StatefulWidget {
   final String title;
-
   HomePage({Key key, this.title}) : super(key: key);
 
   @override
@@ -39,6 +39,8 @@ class _HomePageState extends State<HomePage>
   bool _showAddTask = false;
   bool _showAddEvent = false;
   bool _showAddReminder = false;
+
+
   bool _isLogin = true;
 
   dynamic FloatingActionButtonAndBubbles;
@@ -74,6 +76,7 @@ class _HomePageState extends State<HomePage>
     });
   }
 
+
   @override
   void initState() {
     FloatingActionButtonAndBubbles = FloatingActionButton.FloatingActionButton(
@@ -83,6 +86,7 @@ class _HomePageState extends State<HomePage>
         AddEventPanel.AddEventPanel(this.callback_AddEventPanel);
     AddReminderPanelWidget =
         AddReminderPanel.AddReminderPanel(this.callback_AddReminderPanel);
+
     super.initState();
   }
 
@@ -153,9 +157,11 @@ class _HomePageState extends State<HomePage>
                   var tempTaskDate = DateTime.parse(TasksBody[y]['task_date']);
                   if (tempDate ==
                       DateFormat('yyyy-MM-dd').format(tempTaskDate)) {
+                    int color = int.tryParse(TasksBody[y]['task_color']);
+                    assert(color is int);
                     dayTasks.add(new TaskModel.Task(
                         TasksBody[y]['task_name'],
-                        TasksBody[y]['task_color'],
+                        color,
                         TasksBody[y]['task_date'],
                         TasksBody[y]['task_time']));
                   }
@@ -165,20 +171,24 @@ class _HomePageState extends State<HomePage>
                   var tempEventStartDate =
                       DateTime.parse(EventsBody[y]['event_start_date']);
                   var tempEventEndDate =
-                      DateTime.parse(EventsBody[y]['event_start_date']);
+                      DateTime.parse(EventsBody[y]['event_end_date']);
                   if (tempDate ==
                       DateFormat('yyyy-MM-dd').format(tempEventStartDate)) {
+                    int color = int.tryParse(EventsBody[y]['event_color']);
+                    assert(color is int);
                     dayEvents.add(new EventModel.Event(
                         EventsBody[y]['event_name'],
-                        EventsBody[y]['event_color'],
+                        color,
                         EventsBody[y]['event_start_date'],
                         EventsBody[y]['event_end_date']));
                   }
                   if (tempDate ==
                       DateFormat('yyyy-MM-dd').format(tempEventEndDate)) {
+                    int color = int.tryParse(EventsBody[y]['event_color']);
+                    assert(color is int);
                     dayEvents.add(new EventModel.Event(
                         EventsBody[y]['event_name'],
-                        EventsBody[y]['event_color'],
+                        color,
                         EventsBody[y]['event_start_date'],
                         EventsBody[y]['event_end_date']));
                   }
@@ -189,9 +199,11 @@ class _HomePageState extends State<HomePage>
                       DateTime.parse(RemindersBody[y]['reminder_date']);
                   if (tempDate ==
                       DateFormat('yyyy-MM-dd').format(tempReminderDate)) {
+                    int color = int.tryParse(RemindersBody[y]['reminder_color']);
+                    assert(color is int);
                     dayReminders.add(new ReminderModel.Reminder(
                         RemindersBody[y]['reminder_name'],
-                        RemindersBody[y]['reminder_color'],
+                        color,
                         RemindersBody[y]['reminder_date'],
                         RemindersBody[y]['reminder_time']));
                   }

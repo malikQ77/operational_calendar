@@ -1,7 +1,7 @@
 
 class Event {
   String eventName;
-  String eventColor;
+  int eventColor;
   String eventStartDate;
   String eventEndDate;
 
