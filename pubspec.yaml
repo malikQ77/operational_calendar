@@ -34,6 +34,7 @@ dependencies:
   floating_action_bubble: ^1.1.2
   sliding_up_panel: ^1.0.2
   flutter_material_color_picker: ^1.0.5
+  timelines: ^0.0.2+1
 
 dev_dependencies:
   flutter_test:

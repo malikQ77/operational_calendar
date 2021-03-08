@@ -12,6 +12,7 @@ import 'package:aramco_calendar/Widgets/home.dart' as Home;
 import 'package:aramco_calendar/Routes/routesHandler.dart' as RoutesHandler;
 
 
+
 class AddReminderPanel extends StatefulWidget {
   Function callback_AddReminderPanel;
 
@@ -41,7 +42,7 @@ class _AddReminderPanelState extends State<AddReminderPanel>
   double _panelMaxHeight = 300;
   dynamic _date = new DateTime.now();
   dynamic _time = DateTime.now().add(Duration(hours: 1));
-  dynamic _color = Colors.lightGreenAccent;
+  dynamic _color = Colors.red;
 
   TextEditingController titleController = TextEditingController();
 
@@ -342,7 +343,7 @@ class _AddReminderPanelState extends State<AddReminderPanel>
                           circleSize: 30,
                           elevation: 0,
                           colors: [
-                            Colors.deepOrange,
+                            Colors.red,
                             Colors.yellow,
                             Colors.lightGreen,
                             Colors.redAccent,

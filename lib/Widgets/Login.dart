@@ -19,12 +19,9 @@ class _LoginState extends State<Login>
         backgroundColor: Colors.white,
         appBar: AppBar(
           elevation: 4,
-          title: Text(
-            'Login',
-            style: TextStyle(color: Colors.black, fontSize: 22),
-          ),
+          title: Text('Login'),
           centerTitle: true,
         ),
-        body: Center(child: Text('Login'),));
+        body: Center(child: Text('d'),));
   }
 }

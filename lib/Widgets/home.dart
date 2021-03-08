@@ -28,6 +28,7 @@ import 'package:aramco_calendar/Widgets/AddReminderPanel.dart'
 
 class HomePage extends StatefulWidget {
   final String title;
+
   HomePage({Key key, this.title}) : super(key: key);
 
   @override
@@ -40,8 +41,8 @@ class _HomePageState extends State<HomePage>
   bool _showAddEvent = false;
   bool _showAddReminder = false;
 
-
   bool _isLogin = true;
+
 
   dynamic FloatingActionButtonAndBubbles;
   dynamic AddTaskPanelWidget;
@@ -76,7 +77,6 @@ class _HomePageState extends State<HomePage>
     });
   }
 
-
   @override
   void initState() {
     FloatingActionButtonAndBubbles = FloatingActionButton.FloatingActionButton(
@@ -86,7 +86,6 @@ class _HomePageState extends State<HomePage>
         AddEventPanel.AddEventPanel(this.callback_AddEventPanel);
     AddReminderPanelWidget =
         AddReminderPanel.AddReminderPanel(this.callback_AddReminderPanel);
-
     super.initState();
   }
 
@@ -122,7 +121,7 @@ class _HomePageState extends State<HomePage>
 
         var changeDayTextColor = true; // true => blue , false => green
 
-        for (int i = 1; i < monthsLength; i++) {
+        for (int i = 1; i <= monthsLength; i++) {
           var monthDates = listOfMonthDate(currentYear, i);
           var monthHijriDate = listOfHijriDatesOfMonth(currentYear, i);
           var weeks = eachDayWeekNumber(currentYear, i);
@@ -199,7 +198,8 @@ class _HomePageState extends State<HomePage>
                       DateTime.parse(RemindersBody[y]['reminder_date']);
                   if (tempDate ==
                       DateFormat('yyyy-MM-dd').format(tempReminderDate)) {
-                    int color = int.tryParse(RemindersBody[y]['reminder_color']);
+                    int color =
+                        int.tryParse(RemindersBody[y]['reminder_color']);
                     assert(color is int);
                     dayReminders.add(new ReminderModel.Reminder(
                         RemindersBody[y]['reminder_name'],
@@ -373,7 +373,7 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xfff5f2f0),
       body: Stack(
         children: [
           CustomScrollView(
@@ -426,9 +426,17 @@ class _HomePageState extends State<HomePage>
                         children: <Widget>[
                           for (int i = 0; i < snapshot.data.length; i++)
                             new Container(
+                              margin: EdgeInsets.only(top: 30, right: 15, left: 15),
+                              padding: EdgeInsets.only(top:10 , left: 10,bottom: 10,right: 10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(15.0),
+                                  topRight: Radius.circular(15.0),
+                                  bottomRight: Radius.circular(15.0),
+                                ),
+                              ),
                               height: MediaQuery.of(context).size.height,
-                              margin:
-                                  EdgeInsets.only(top: 10, right: 15, left: 15),
                               alignment: Alignment.center,
                               child: new MonthWidget.MonthWidget(
                                   snapshot.data[i],

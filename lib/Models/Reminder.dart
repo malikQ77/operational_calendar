@@ -3,13 +3,13 @@ class Reminder {
   String reminderName;
   int reminderColor;
   String reminderDate;
-  String reminderTime;
+  String time;
 
 
-  Reminder(reminderName, reminderColor ,reminderDate , reminderTime) {
+  Reminder(reminderName, reminderColor ,reminderDate , time) {
     this.reminderName = reminderName;
     this.reminderColor = reminderColor;
     this.reminderDate = reminderDate;
-    this.reminderTime = reminderTime;
+    this.time = time;
   }
 }
