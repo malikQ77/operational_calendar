@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 
 import 'package:aramco_calendar/Widgets/home.dart' as Home;
 import 'package:aramco_calendar/Routes/routesHandler.dart' as RoutesHandler;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
 class AddTaskPanel extends StatefulWidget {
@@ -19,6 +20,23 @@ class AddTaskPanel extends StatefulWidget {
 
   @override
   _AddTaskPanelState createState() => new _AddTaskPanelState();
+}
+
+class NewScreen extends StatelessWidget {
+  String payload;
+
+  NewScreen({
+    @required this.payload,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(payload),
+      ),
+    );
+  }
 }
 
 class _AddTaskPanelState extends State<AddTaskPanel>
@@ -48,7 +66,47 @@ class _AddTaskPanelState extends State<AddTaskPanel>
   bool _taskAdded = false;
   bool _isLoading = false;
 
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
+  void initState() {
+    super.initState();
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('mipmap/ic_launcher');
+    var initializationSettingsIOs = IOSInitializationSettings();
+    var initSetttings = InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOs);
+
+    flutterLocalNotificationsPlugin.initialize(initSetttings,
+        onSelectNotification: null);
+  }
+
+  // Future onSelectNotification(String payload) {
+  //   Navigator.of(context).push(RoutesHandler.route(Home.HomePage()));
+  // }
+
+  Future<void> scheduleNotification() async {
+    var date = DateFormat('yyyy-MM-dd').format(_date);
+    var hour = DateFormat('H').format(_time);
+    var min = DateFormat('m').format(_time);
+    var scheduledNotificationDateTime = DateTime.parse(date).add(Duration(hours: int.parse(hour) , minutes: int.parse(min))).toLocal();
+    var android = AndroidNotificationDetails('id', 'channel ', 'description',
+        priority: Priority.High, importance: Importance.Max);
+    var iOS = IOSNotificationDetails();
+    var platform = new NotificationDetails(android, iOS);
+    await flutterLocalNotificationsPlugin.schedule(0, 'Task ✅',
+        titleController.text, scheduledNotificationDateTime, platform);
+  }
+
+  showNotification() async {
+    var android = AndroidNotificationDetails('id', 'channel ', 'description',
+        priority: Priority.High, importance: Importance.Max);
+    var iOS = IOSNotificationDetails();
+    var platform = new NotificationDetails(android, iOS);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'Test Notification', 'Reminder ....', platform,
+        payload: 'Welcome to the Local Notification demo');
+  }
 
   Future<void> _showMyDialog() async {
     return showDialog<void>(
@@ -97,7 +155,6 @@ class _AddTaskPanelState extends State<AddTaskPanel>
 
   @override
   Widget build(BuildContext context) {
-
     void _handleNewTask() async {
       setState(() {
         _isLoading = true;
@@ -119,6 +176,7 @@ class _AddTaskPanelState extends State<AddTaskPanel>
           _showAddTask = false;
           _isLoading = false;
         });
+        scheduleNotification();
         Navigator.of(context).push(RoutesHandler.route(Home.HomePage()));
       }
     }
@@ -209,73 +267,75 @@ class _AddTaskPanelState extends State<AddTaskPanel>
                                 'Back',
                                 style: TextStyle(color: Color(0xFF00a3e0)),
                               )),
-                      _stepNumber == 3 ? RaisedButton(
-                        color: Color(0xFF00a3e0),
-                        onPressed: () {
-                          _isLoading ? null : _handleNewTask();
-                        },
-                        child: _isLoading
-                            ? Container(
-                          width: 20,
-                          height: 20,
-                          child: new CircularProgressIndicator(
-                            backgroundColor: Color(0xFF02a1e2),
-                          ),
-                        )
-                            : Text(
-                          'Save',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ): RaisedButton(
-                        color: Color(0xFF00a3e0),
-                        onPressed: () {
-                          if (_stepNumber != 3) {
-                            if (titleController.text.isEmpty) {
-                              setState(() {
-                                _errorMsg = 'Task name required';
-                              });
-                            } else if (_stepNumber == 2) {
-                              if (_datePicker == false) {
-                                if (_todayClicked == false &&
-                                    _tomorrowClicked == false &&
-                                    _nextWeekClicked == false) {
-                                  setState(() {
-                                    _errorMsg = 'Please pick date';
-                                  });
-                                } else {
-                                  setState(() {
-                                    _errorMsg = '';
-                                    _stepNumber++;
-                                    _panelMaxHeight = 300;
-                                  });
+                      _stepNumber == 3
+                          ? RaisedButton(
+                              color: Color(0xFF00a3e0),
+                              onPressed: () {
+                                _isLoading ? null : _handleNewTask();
+                              },
+                              child: _isLoading
+                                  ? Container(
+                                      width: 20,
+                                      height: 20,
+                                      child: new CircularProgressIndicator(
+                                        backgroundColor: Color(0xFF02a1e2),
+                                      ),
+                                    )
+                                  : Text(
+                                      'Save',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                            )
+                          : RaisedButton(
+                              color: Color(0xFF00a3e0),
+                              onPressed: () {
+                                if (_stepNumber != 3) {
+                                  if (titleController.text.isEmpty) {
+                                    setState(() {
+                                      _errorMsg = 'Task name required';
+                                    });
+                                  } else if (_stepNumber == 2) {
+                                    if (_datePicker == false) {
+                                      if (_todayClicked == false &&
+                                          _tomorrowClicked == false &&
+                                          _nextWeekClicked == false) {
+                                        setState(() {
+                                          _errorMsg = 'Please pick date';
+                                        });
+                                      } else {
+                                        setState(() {
+                                          _errorMsg = '';
+                                          _stepNumber++;
+                                          _panelMaxHeight = 300;
+                                        });
+                                      }
+                                    } else {
+                                      setState(() {
+                                        _errorMsg = '';
+                                        _stepNumber++;
+                                        _panelMaxHeight = 300;
+                                      });
+                                    }
+                                  } else if (_stepNumber == 1 &&
+                                      _datePicker == true) {
+                                    setState(() {
+                                      _stepNumber++;
+                                      _panelMaxHeight = 500;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      _errorMsg = '';
+                                      _stepNumber++;
+                                      _panelMaxHeight = 300;
+                                    });
+                                  }
                                 }
-                              } else {
-                                setState(() {
-                                  _errorMsg = '';
-                                  _stepNumber++;
-                                  _panelMaxHeight = 300;
-                                });
-                              }
-                            } else if (_stepNumber == 1 &&
-                                _datePicker == true) {
-                              setState(() {
-                                _stepNumber++;
-                                _panelMaxHeight = 500;
-                              });
-                            } else {
-                              setState(() {
-                                _errorMsg = '';
-                                _stepNumber++;
-                                _panelMaxHeight = 300;
-                              });
-                            }
-                          }
-                        },
-                        child: Text(
-                               'Next',
+                              },
+                              child: Text(
+                                'Next',
                                 style: TextStyle(color: Colors.white),
                               ),
-                      ),
+                            ),
                     ],
                   )),
             ],

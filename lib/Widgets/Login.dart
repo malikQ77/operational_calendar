@@ -9,12 +9,10 @@ class Login extends StatefulWidget {
   _LoginState createState() => _LoginState();
 }
 
-class _LoginState extends State<Login>
-    with SingleTickerProviderStateMixin {
+class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -22,6 +20,8 @@ class _LoginState extends State<Login>
           title: Text('Login'),
           centerTitle: true,
         ),
-        body: Center(child: Text('d'),));
+        body: Center(
+          child: Text('d'),
+        ));
   }
 }

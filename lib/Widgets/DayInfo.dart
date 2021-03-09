@@ -24,17 +24,6 @@ class _DayInfoState extends State<DayInfo> with SingleTickerProviderStateMixin {
   ).createShader(Rect.fromLTWH(0.0, 0.0, 80.0, 70.0));
   bool _done = false;
 
-  // merge 3 array
-  // sorting by timestamp
-  // display /:
-
-  // 1- add event start date and end date, also is start or end
-  // 2- make all of theme same name time , date => x taskTime
-  // 3- marge 3 array
-  // 4- sort by time
-  // 5- format time
-  // 6- display
-
   @override
   Widget build(BuildContext context) {
     List<dynamic> sortedRemindersAndTasks = new List();
@@ -79,7 +68,7 @@ class _DayInfoState extends State<DayInfo> with SingleTickerProviderStateMixin {
                   child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  widget.day.type == 'Normal' ||  widget.day.type == 'WeekEndDay'
+                  widget.day.type == 'Normal' || widget.day.type == 'WeekEndDay'
                       ? Container(
                           height: 0,
                           width: 0,
@@ -90,8 +79,8 @@ class _DayInfoState extends State<DayInfo> with SingleTickerProviderStateMixin {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                width: 80,
-                                height: 30,
+                                width: 40,
+                                height: 20,
                                 margin: EdgeInsets.only(right: 6),
                                 decoration: BoxDecoration(
                                   color: Color(widget.day.bgColor),
@@ -103,9 +92,10 @@ class _DayInfoState extends State<DayInfo> with SingleTickerProviderStateMixin {
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.white,
-                                      spreadRadius: 1,
+                                      spreadRadius: 0,
                                       blurRadius: 0,
-                                      offset: Offset(1, 1), // changes position of shadow
+                                      offset: Offset(
+                                          0, 0), // changes position of shadow
                                     ),
                                   ],
                                 ),
@@ -159,9 +149,14 @@ class _DayInfoState extends State<DayInfo> with SingleTickerProviderStateMixin {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(15.0),
-                  topRight: Radius.circular(15.0),
-                ),
+                    topLeft: Radius.circular(15.0),
+                    topRight: Radius.circular(15.0),
+                    bottomLeft: sortedRemindersAndTasks.isEmpty
+                        ? Radius.circular(15.0)
+                        : Radius.circular(0),
+                    bottomRight: sortedRemindersAndTasks.isEmpty
+                        ? Radius.circular(15.0)
+                        : Radius.circular(0)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.5),
@@ -171,148 +166,183 @@ class _DayInfoState extends State<DayInfo> with SingleTickerProviderStateMixin {
                   ),
                 ],
               ),
-              child: Timeline.tileBuilder(
-                theme: TimelineTheme.of(context).copyWith(
-                  nodePosition: 0,
-                  connectorTheme: TimelineTheme.of(context)
-                      .connectorTheme
-                      .copyWith(thickness: 1.0, color: Color(0xffdadada)),
-                  indicatorTheme: TimelineTheme.of(context)
-                      .indicatorTheme
-                      .copyWith(
-                          size: 25.0, position: 0.5, color: Color(0xffdadada)),
-                ),
-                builder: TimelineTileBuilder.fromStyle(
-                  indicatorStyle: IndicatorStyle.outlined,
-                  contentsBuilder: (context, index) => Padding(
-                    padding: const EdgeInsets.only(
-                        top: 24, left: 15, right: 10, bottom: 24),
-                    child: sortedRemindersAndTasks[index].runtimeType == Event
-                        ? Container(
-                            margin: EdgeInsets.only(left: 0, right: 0),
-                            padding: EdgeInsets.only(
-                                left: 8, right: 0, top: 10, bottom: 10),
-                            decoration: BoxDecoration(
-                              border: Border(
-                                left: BorderSide(
-                                    width: 3.0,
-                                    color: Color(sortedRemindersAndTasks[index]
-                                        .eventColor)),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Event: ' +
-                                          sortedRemindersAndTasks[index]
-                                              .eventName,
-                                      style: _done
-                                          ? TextStyle(
-                                              color: Colors.black87,
-                                              decoration:
-                                                  TextDecoration.lineThrough,
-                                              decorationColor: Colors.red)
-                                          : TextStyle(color: Colors.black87),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          )
-                        : sortedRemindersAndTasks[index].runtimeType == Task
-                            ? Container(
-                                margin: EdgeInsets.only(left: 0, right: 0),
-                                padding: EdgeInsets.only(
-                                    left: 8, right: 0, top: 10, bottom: 10),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    left: BorderSide(
-                                        width: 3.0,
-                                        color: Color(
-                                            sortedRemindersAndTasks[index]
-                                                .taskColor)),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(DateFormat.jm().format(
-                                            DateTime.parse(
-                                                sortedRemindersAndTasks[index]
-                                                    .time))),
-                                        Text(
-                                          'Task: ' +
+              child: sortedRemindersAndTasks.isEmpty
+                  ? Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 150,
+                      alignment: Alignment.center,
+                      child: Text(
+                        'No Upcoming events',
+                        textAlign: TextAlign.center,
+                        style:
+                            TextStyle(fontSize: 25, color: Color(0xffdadada)),
+                      ),
+                    )
+                  : Timeline.tileBuilder(
+                      theme: TimelineTheme.of(context).copyWith(
+                        nodePosition: 0,
+                        connectorTheme: TimelineTheme.of(context)
+                            .connectorTheme
+                            .copyWith(thickness: 1.0, color: Color(0xffdadada)),
+                        indicatorTheme: TimelineTheme.of(context)
+                            .indicatorTheme
+                            .copyWith(
+                                size: 25.0,
+                                position: 0.5,
+                                color: Color(0xffdadada)),
+                      ),
+                      builder: TimelineTileBuilder.fromStyle(
+                        indicatorStyle: IndicatorStyle.outlined,
+                        contentsBuilder: (context, index) => Padding(
+                          padding: const EdgeInsets.only(
+                              top: 24, left: 15, right: 10, bottom: 24),
+                          child: sortedRemindersAndTasks[index].runtimeType ==
+                                  Event
+                              ? Container(
+                                  margin: EdgeInsets.only(left: 0, right: 0),
+                                  padding: EdgeInsets.only(
+                                      left: 8, right: 0, top: 10, bottom: 10),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(
+                                          width: 3.0,
+                                          color: Color(
                                               sortedRemindersAndTasks[index]
-                                                  .taskName,
-                                          style:
-                                              TextStyle(color: Colors.black87),
-                                        ),
-                                      ],
+                                                  .eventColor)),
                                     ),
-                                  ],
-                                ),
-                              )
-                            : sortedRemindersAndTasks[index].runtimeType ==
-                                    Reminder
-                                ? Container(
-                                    margin: EdgeInsets.only(left: 0, right: 0),
-                                    padding: EdgeInsets.only(
-                                        left: 8, right: 0, top: 10, bottom: 10),
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        left: BorderSide(
-                                            width: 3.0,
-                                            color: Color(
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            'Event: ' +
                                                 sortedRemindersAndTasks[index]
-                                                    .reminderColor)),
+                                                    .eventName,
+                                            style: _done
+                                                ? TextStyle(
+                                                    color: Colors.black87,
+                                                    decoration: TextDecoration
+                                                        .lineThrough,
+                                                    decorationColor: Colors.red)
+                                                : TextStyle(
+                                                    color: Colors.black87),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(DateFormat.jm().format(
-                                                DateTime.parse(
+                                    ],
+                                  ),
+                                )
+                              : sortedRemindersAndTasks[index].runtimeType ==
+                                      Task
+                                  ? Container(
+                                      margin:
+                                          EdgeInsets.only(left: 0, right: 0),
+                                      padding: EdgeInsets.only(
+                                          left: 8,
+                                          right: 0,
+                                          top: 10,
+                                          bottom: 10),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(
+                                              width: 3.0,
+                                              color: Color(
+                                                  sortedRemindersAndTasks[index]
+                                                      .taskColor)),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(DateFormat.jm().format(
+                                                  DateTime.parse(
+                                                      sortedRemindersAndTasks[
+                                                              index]
+                                                          .time))),
+                                              Text(
+                                                'Task: ' +
                                                     sortedRemindersAndTasks[
                                                             index]
-                                                        .time))),
-                                            Text(
-                                              'Reminder: ' +
-                                                  sortedRemindersAndTasks[index]
-                                                      .reminderName,
-                                              style: TextStyle(
-                                                  color: Colors.black87),
+                                                        .taskName,
+                                                style: TextStyle(
+                                                    color: Colors.black87),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : sortedRemindersAndTasks[index]
+                                              .runtimeType ==
+                                          Reminder
+                                      ? Container(
+                                          margin: EdgeInsets.only(
+                                              left: 0, right: 0),
+                                          padding: EdgeInsets.only(
+                                              left: 8,
+                                              right: 0,
+                                              top: 10,
+                                              bottom: 10),
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              left: BorderSide(
+                                                  width: 3.0,
+                                                  color: Color(
+                                                      sortedRemindersAndTasks[
+                                                              index]
+                                                          .reminderColor)),
                                             ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : Container(),
-                  ),
-                  itemCount: sortedRemindersAndTasks.length,
-                ),
-              ),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(DateFormat.jm().format(
+                                                      DateTime.parse(
+                                                          sortedRemindersAndTasks[
+                                                                  index]
+                                                              .time))),
+                                                  Text(
+                                                    'Reminder: ' +
+                                                        sortedRemindersAndTasks[
+                                                                index]
+                                                            .reminderName,
+                                                    style: TextStyle(
+                                                        color: Colors.black87),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      : Container(),
+                        ),
+                        itemCount: sortedRemindersAndTasks.length,
+                      ),
+                    ),
             )
           ],
         ));

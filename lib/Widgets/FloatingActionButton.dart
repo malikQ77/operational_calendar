@@ -37,7 +37,11 @@ class _FloatingActionButtonState extends State<FloatingActionButton>  with Singl
     super.initState();
   }
 
-
+  @override
+  dispose() {
+    _animationController.dispose(); // you need this
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return new FloatingActionBubble(
@@ -127,7 +131,6 @@ class _FloatingActionButtonState extends State<FloatingActionButton>  with Singl
       },
 
       iconColor: Colors.white,
-
       iconData: _isBubbleClicked ? Icons.close : Icons.add,
       backGroundColor:
       _isBubbleClicked ? Color(0xFF84bd00) : Color(0xFF00a3e0),

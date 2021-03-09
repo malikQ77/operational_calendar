@@ -10,8 +10,7 @@ import 'package:intl/intl.dart';
 
 import 'package:aramco_calendar/Widgets/home.dart' as Home;
 import 'package:aramco_calendar/Routes/routesHandler.dart' as RoutesHandler;
-
-
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class AddReminderPanel extends StatefulWidget {
   Function callback_AddReminderPanel;
@@ -20,6 +19,23 @@ class AddReminderPanel extends StatefulWidget {
 
   @override
   _AddReminderPanelState createState() => new _AddReminderPanelState();
+}
+
+class NewScreen extends StatelessWidget {
+  String payload;
+
+  NewScreen({
+    @required this.payload,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(payload),
+      ),
+    );
+  }
 }
 
 class _AddReminderPanelState extends State<AddReminderPanel>
@@ -49,7 +65,56 @@ class _AddReminderPanelState extends State<AddReminderPanel>
   bool _reminderAdded = false;
   bool _isLoading = false;
 
+  @override
+  dispose() {
+    titleController.dispose(); // you need this
+    super.dispose();
+  }
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
+  void initState() {
+    super.initState();
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('mipmap/ic_launcher');
+    var initializationSettingsIOs = IOSInitializationSettings();
+    var initSetttings = InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOs);
+
+    flutterLocalNotificationsPlugin.initialize(initSetttings,
+        onSelectNotification: onSelectNotification);
+  }
+
+  Future onSelectNotification(String payload) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+      return NewScreen(
+        payload: payload,
+      );
+    }));
+  }
+
+  Future<void> scheduleNotification() async {
+    var date = DateFormat('yyyy-MM-dd').format(_date);
+    var hour = DateFormat('H').format(_time);
+    var min = DateFormat('m').format(_time);
+    var scheduledNotificationDateTime = DateTime.parse(date).add(Duration(hours: int.parse(hour) , minutes: int.parse(min))).toLocal();
+    var android = AndroidNotificationDetails('id', 'channel ', 'description',
+        priority: Priority.High, importance: Importance.Max);
+    var iOS = IOSNotificationDetails();
+    var platform = new NotificationDetails(android, iOS);
+    await flutterLocalNotificationsPlugin.schedule(
+        0, 'Reminder ⏰', titleController.text, scheduledNotificationDateTime, platform);
+  }
+
+  showNotification() async {
+    var android = AndroidNotificationDetails('id', 'channel ', 'description',
+        priority: Priority.High, importance: Importance.Max);
+    var iOS = IOSNotificationDetails();
+    var platform = new NotificationDetails(android, iOS);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'Test Notification', 'Reminder ....', platform,
+        payload: 'Welcome to the Local Notification demo');
+  }
 
   Future<void> _showMyDialog() async {
     return showDialog<void>(
@@ -98,7 +163,6 @@ class _AddReminderPanelState extends State<AddReminderPanel>
 
   @override
   Widget build(BuildContext context) {
-
     void _handleNewReminder() async {
       setState(() {
         _isLoading = true;
@@ -120,6 +184,7 @@ class _AddReminderPanelState extends State<AddReminderPanel>
           _showAddReminder = false;
           _isLoading = false;
         });
+        scheduleNotification();
         Navigator.of(context).push(RoutesHandler.route(Home.HomePage()));
       }
     }
@@ -193,90 +258,92 @@ class _AddReminderPanelState extends State<AddReminderPanel>
                       _stepNumber == 1
                           ? Container()
                           : TextButton(
-                          onPressed: () {
-                            if (_stepNumber == 3 && _datePicker == true) {
-                              setState(() {
-                                _stepNumber--;
-                                _panelMaxHeight = 500;
-                              });
-                            } else {
-                              setState(() {
-                                _stepNumber--;
-                                _panelMaxHeight = 300;
-                              });
-                            }
-                          },
-                          child: Text(
-                            'Back',
-                            style: TextStyle(color: Color(0xFF00a3e0)),
-                          )),
-                      _stepNumber == 3 ? RaisedButton(
-                        color: Color(0xFF00a3e0),
-                        onPressed: () {
-                          _isLoading ? null : _handleNewReminder();
-                        },
-                        child: _isLoading
-                            ? Container(
-                          width: 20,
-                          height: 20,
-                          child: new CircularProgressIndicator(
-                            backgroundColor: Color(0xFF02a1e2),
-                          ),
-                        )
-                            : Text(
-                          'Save',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ): RaisedButton(
-                        color: Color(0xFF00a3e0),
-                        onPressed: () {
-                          if (_stepNumber != 3) {
-                            if (titleController.text.isEmpty) {
-                              setState(() {
-                                _errorMsg = 'Reminder name required';
-                              });
-                            } else if (_stepNumber == 2) {
-                              if (_datePicker == false) {
-                                if (_todayClicked == false &&
-                                    _tomorrowClicked == false &&
-                                    _nextWeekClicked == false) {
+                              onPressed: () {
+                                if (_stepNumber == 3 && _datePicker == true) {
                                   setState(() {
-                                    _errorMsg = 'Please pick date';
+                                    _stepNumber--;
+                                    _panelMaxHeight = 500;
                                   });
                                 } else {
                                   setState(() {
-                                    _errorMsg = '';
-                                    _stepNumber++;
+                                    _stepNumber--;
                                     _panelMaxHeight = 300;
                                   });
                                 }
-                              } else {
-                                setState(() {
-                                  _errorMsg = '';
-                                  _stepNumber++;
-                                  _panelMaxHeight = 300;
-                                });
-                              }
-                            } else if (_stepNumber == 1 &&
-                                _datePicker == true) {
-                              setState(() {
-                                _stepNumber++;
-                                _panelMaxHeight = 500;
-                              });
-                            } else {
-                              setState(() {
-                                _errorMsg = '';
-                                _stepNumber++;
-                                _panelMaxHeight = 300;
-                              });
-                            }
-                          }
-                        },
-                        child: Text(
-                          'Next',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
+                              },
+                              child: Text(
+                                'Back',
+                                style: TextStyle(color: Color(0xFF00a3e0)),
+                              )),
+                      _stepNumber == 3
+                          ? RaisedButton(
+                              color: Color(0xFF00a3e0),
+                              onPressed: () {
+                                _isLoading ? null : _handleNewReminder();
+                              },
+                              child: _isLoading
+                                  ? Container(
+                                      width: 20,
+                                      height: 20,
+                                      child: new CircularProgressIndicator(
+                                        backgroundColor: Color(0xFF02a1e2),
+                                      ),
+                                    )
+                                  : Text(
+                                      'Save',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                            )
+                          : RaisedButton(
+                              color: Color(0xFF00a3e0),
+                              onPressed: () {
+                                if (_stepNumber != 3) {
+                                  if (titleController.text.isEmpty) {
+                                    setState(() {
+                                      _errorMsg = 'Reminder name required';
+                                    });
+                                  } else if (_stepNumber == 2) {
+                                    if (_datePicker == false) {
+                                      if (_todayClicked == false &&
+                                          _tomorrowClicked == false &&
+                                          _nextWeekClicked == false) {
+                                        setState(() {
+                                          _errorMsg = 'Please pick date';
+                                        });
+                                      } else {
+                                        setState(() {
+                                          _errorMsg = '';
+                                          _stepNumber++;
+                                          _panelMaxHeight = 300;
+                                        });
+                                      }
+                                    } else {
+                                      setState(() {
+                                        _errorMsg = '';
+                                        _stepNumber++;
+                                        _panelMaxHeight = 300;
+                                      });
+                                    }
+                                  } else if (_stepNumber == 1 &&
+                                      _datePicker == true) {
+                                    setState(() {
+                                      _stepNumber++;
+                                      _panelMaxHeight = 500;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      _errorMsg = '';
+                                      _stepNumber++;
+                                      _panelMaxHeight = 300;
+                                    });
+                                  }
+                                }
+                              },
+                              child: Text(
+                                'Next',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
                     ],
                   )),
             ],
@@ -316,7 +383,7 @@ class _AddReminderPanelState extends State<AddReminderPanel>
                     hintText: 'Reminder name',
                     contentPadding: EdgeInsets.zero,
                     hintStyle:
-                    TextStyle(fontSize: 18, color: Color(0xffdadada)),
+                        TextStyle(fontSize: 18, color: Color(0xffdadada)),
                   ),
                 ),
               ),
@@ -324,7 +391,7 @@ class _AddReminderPanelState extends State<AddReminderPanel>
               Container(
                 margin: EdgeInsets.only(top: 5),
                 padding:
-                EdgeInsets.only(left: 22, right: 22, bottom: 15, top: 7),
+                    EdgeInsets.only(left: 22, right: 22, bottom: 15, top: 7),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -374,7 +441,7 @@ class _AddReminderPanelState extends State<AddReminderPanel>
                         color: _todayClicked ? Color(0xffdadada) : Colors.white,
                         border: Border(
                           bottom:
-                          BorderSide(color: Color(0xffdadada), width: 0.6),
+                              BorderSide(color: Color(0xffdadada), width: 0.6),
                         ),
                       ),
                       child: TextButton(
@@ -397,7 +464,7 @@ class _AddReminderPanelState extends State<AddReminderPanel>
                                     margin: EdgeInsets.only(right: 5),
                                     child: Icon(Icons.today,
                                         color:
-                                        Color(0xFF00a3e0).withOpacity(0.5)),
+                                            Color(0xFF00a3e0).withOpacity(0.5)),
                                   ),
                                   Text(
                                     'Today',
@@ -423,10 +490,10 @@ class _AddReminderPanelState extends State<AddReminderPanel>
                           left: 22, right: 22, bottom: 0, top: 0),
                       decoration: BoxDecoration(
                         color:
-                        _tomorrowClicked ? Color(0xffdadada) : Colors.white,
+                            _tomorrowClicked ? Color(0xffdadada) : Colors.white,
                         border: Border(
                           bottom:
-                          BorderSide(color: Color(0xffdadada), width: 0.6),
+                              BorderSide(color: Color(0xffdadada), width: 0.6),
                         ),
                       ),
                       child: TextButton(
@@ -449,7 +516,7 @@ class _AddReminderPanelState extends State<AddReminderPanel>
                                     margin: EdgeInsets.only(right: 5),
                                     child: Icon(Icons.date_range_outlined,
                                         color:
-                                        Color(0xFF00a3e0).withOpacity(0.5)),
+                                            Color(0xFF00a3e0).withOpacity(0.5)),
                                   ),
                                   Text(
                                     'Tomorrow',
@@ -475,10 +542,10 @@ class _AddReminderPanelState extends State<AddReminderPanel>
                           left: 22, right: 22, bottom: 0, top: 0),
                       decoration: BoxDecoration(
                         color:
-                        _nextWeekClicked ? Color(0xffdadada) : Colors.white,
+                            _nextWeekClicked ? Color(0xffdadada) : Colors.white,
                         border: Border(
                           bottom:
-                          BorderSide(color: Color(0xffdadada), width: 0.6),
+                              BorderSide(color: Color(0xffdadada), width: 0.6),
                         ),
                       ),
                       child: TextButton(
@@ -501,7 +568,7 @@ class _AddReminderPanelState extends State<AddReminderPanel>
                                     margin: EdgeInsets.only(right: 5),
                                     child: Icon(Icons.next_week_outlined,
                                         color:
-                                        Color(0xFF00a3e0).withOpacity(0.5)),
+                                            Color(0xFF00a3e0).withOpacity(0.5)),
                                   ),
                                   Text(
                                     'Next week',
@@ -528,7 +595,7 @@ class _AddReminderPanelState extends State<AddReminderPanel>
                       decoration: BoxDecoration(
                         border: Border(
                           bottom:
-                          BorderSide(color: Color(0xffdadada), width: 0.6),
+                              BorderSide(color: Color(0xffdadada), width: 0.6),
                         ),
                       ),
                       child: TextButton(
@@ -549,7 +616,7 @@ class _AddReminderPanelState extends State<AddReminderPanel>
                                     margin: EdgeInsets.only(right: 5),
                                     child: Icon(Icons.today_outlined,
                                         color:
-                                        Color(0xFF00a3e0).withOpacity(0.5)),
+                                            Color(0xFF00a3e0).withOpacity(0.5)),
                                   ),
                                   Text(
                                     'Pick date',
@@ -574,7 +641,7 @@ class _AddReminderPanelState extends State<AddReminderPanel>
                 child: Theme(
                     data: ThemeData.from(
                         colorScheme:
-                        ColorScheme.light(primary: Color(0xFF00a3e0))),
+                            ColorScheme.light(primary: Color(0xFF00a3e0))),
                     child: CalendarDatePicker(
                       initialCalendarMode: DatePickerMode.day,
                       initialDate: _date,
@@ -595,7 +662,7 @@ class _AddReminderPanelState extends State<AddReminderPanel>
                 children: [
                   Container(
                     padding:
-                    EdgeInsets.only(left: 22, right: 22, bottom: 0, top: 0),
+                        EdgeInsets.only(left: 22, right: 22, bottom: 0, top: 0),
                     child: Row(
                       children: [
                         Container(
