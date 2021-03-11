@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:aramco_calendar/CoreFunctions/DatesFunctions.dart' as DatesFunctions;
 import 'package:aramco_calendar/Widgets/Login.dart' as Login;
+import 'package:aramco_calendar/Widgets/home.dart' as Home;
 import 'package:aramco_calendar/Routes/routesHandler.dart' as RoutesHandler;
-
+import 'package:shared_preferences/shared_preferences.dart';
 final Shader linearGradient = LinearGradient(
   colors: <Color>[const Color(0xFF84bd00), const Color(0xFF00a3e0)],
 ).createShader(Rect.fromLTWH(0.0, 0.0, 80.0, 70.0));
@@ -130,6 +131,29 @@ Widget build(context){
           ),
           onTap: () {
             Navigator.pop(context);
+          },
+        ),
+        ListTile(
+          title: Row(
+            children: [
+              Container(
+                child: Icon(
+                  Icons.arrow_right_sharp,
+                  size: 15,
+                  color: const Color(0xFF00a3e0),
+                ),
+                margin: EdgeInsets.only(right: 8),
+              ),
+              Text('Logout'),
+            ],
+          ),
+          onTap: ()  async {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            prefs.setBool('is_login', false);
+            prefs.setString('user_id', null);
+
+            Navigator.pop(context);
+            Navigator.of(context).push(RoutesHandler.route(Home.HomePage()));
           },
         ),
       ],

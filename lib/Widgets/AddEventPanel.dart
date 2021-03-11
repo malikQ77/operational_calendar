@@ -5,12 +5,14 @@ import 'package:aramco_calendar/CoreFunctions/DatesFunctions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:intl/intl.dart';
 
 import 'package:aramco_calendar/Widgets/home.dart' as Home;
 import 'package:aramco_calendar/Routes/routesHandler.dart' as RoutesHandler;
 
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class AddEventPanel extends StatefulWidget {
   Function callback_AddEventPanel;
@@ -41,14 +43,67 @@ class _AddEventPanelState extends State<AddEventPanel>
   double _panelMaxHeight = 300;
   dynamic _start_date = new DateTime.now();
   dynamic _end_date = DateTime.now().add(Duration(days: 2));
-  dynamic _color = Colors.lightGreenAccent;
 
   TextEditingController titleController = TextEditingController();
 
   bool _eventAdded = false;
   bool _isLoading = false;
 
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
+  void initState() {
+    super.initState();
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('mipmap/ic_launcher');
+    var initializationSettingsIOs = IOSInitializationSettings();
+    var initSetttings = InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOs);
+
+    flutterLocalNotificationsPlugin.initialize(initSetttings,
+        onSelectNotification: null);
+  }
+
+  Future<void> scheduleNotification() async {
+    var start_date = DateFormat('yyyy-MM-dd').format(_start_date);
+    var end_date = DateFormat('yyyy-MM-dd').format(_end_date);
+    var hour = DateFormat('H').format(DateTime(0, 0, 0, 11, 59));
+    var min = DateFormat('m').format(DateTime(0, 0, 0, 11, 59));
+
+    var scheduledNotificationStartDateTime = DateTime.parse(start_date)
+        .add(Duration(hours: int.parse(hour), minutes: int.parse(min)))
+        .subtract(Duration(days: 1))
+        .toLocal();
+    var scheduledNotificationEndDateTime = DateTime.parse(start_date)
+        .add(Duration(hours: int.parse(hour), minutes: int.parse(min)))
+        .subtract(Duration(days: 1))
+        .toLocal();
+
+    print(scheduledNotificationStartDateTime);
+    print(scheduledNotificationEndDateTime);
+
+    var android = AndroidNotificationDetails('id', 'channel ', 'description',
+        priority: Priority.High, importance: Importance.Max);
+    var iOS = IOSNotificationDetails();
+    var platform = new NotificationDetails(android, iOS);
+    await flutterLocalNotificationsPlugin.schedule(
+        0,
+        'Event Start ⏰',
+        titleController.text +
+            ' At ' +
+            DateFormat('d MMMM, yyyy')
+                .format(scheduledNotificationStartDateTime),
+        scheduledNotificationStartDateTime,
+        platform);
+    await flutterLocalNotificationsPlugin.schedule(
+        1,
+        'Event End ⏰',
+        titleController.text +
+            ' At ' +
+            DateFormat('d MMMM, yyyy').format(scheduledNotificationEndDateTime),
+        scheduledNotificationEndDateTime,
+        platform);
+  }
 
   Future<void> _showMyDialog() async {
     return showDialog<void>(
@@ -97,16 +152,14 @@ class _AddEventPanelState extends State<AddEventPanel>
 
   @override
   Widget build(BuildContext context) {
-
     void _handleNewTask() async {
       setState(() {
         _isLoading = true;
       });
-
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       var data = {
-        'user_id': 1,
+        'user_id': int.parse(prefs.get('user_id')),
         'event_name': titleController.text,
-        'event_color': _color.value,
         'event_start_date': _start_date.toString(),
         'event_end_date': _end_date.toString(),
       };
@@ -119,6 +172,7 @@ class _AddEventPanelState extends State<AddEventPanel>
           _showAddEvent = false;
           _isLoading = false;
         });
+        scheduleNotification();
         Navigator.of(context).push(RoutesHandler.route(Home.HomePage()));
       }
     }
@@ -192,90 +246,92 @@ class _AddEventPanelState extends State<AddEventPanel>
                       _stepNumber == 1
                           ? Container()
                           : TextButton(
-                          onPressed: () {
-                            if (_stepNumber == 3 && _datePicker == true) {
-                              setState(() {
-                                _stepNumber--;
-                                _panelMaxHeight = 500;
-                              });
-                            } else {
-                              setState(() {
-                                _stepNumber--;
-                                _panelMaxHeight = 300;
-                              });
-                            }
-                          },
-                          child: Text(
-                            'Back',
-                            style: TextStyle(color: Color(0xFF00a3e0)),
-                          )),
-                      _stepNumber == 3 ? RaisedButton(
-                        color: Color(0xFF00a3e0),
-                        onPressed: () {
-                          _isLoading ? null : _handleNewTask();
-                        },
-                        child: _isLoading
-                            ? Container(
-                          width: 20,
-                          height: 20,
-                          child: new CircularProgressIndicator(
-                            backgroundColor: Color(0xFF02a1e2),
-                          ),
-                        )
-                            : Text(
-                          'Save',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ): RaisedButton(
-                        color: Color(0xFF00a3e0),
-                        onPressed: () {
-                          if (_stepNumber != 3) {
-                            if (titleController.text.isEmpty) {
-                              setState(() {
-                                _errorMsg = 'Event name required';
-                              });
-                            } else if (_stepNumber == 2) {
-                              if (_datePicker == false) {
-                                if (_todayClicked == false &&
-                                    _tomorrowClicked == false &&
-                                    _nextWeekClicked == false) {
+                              onPressed: () {
+                                if (_stepNumber == 3 && _datePicker == true) {
                                   setState(() {
-                                    _errorMsg = 'Please pick date';
+                                    _stepNumber--;
+                                    _panelMaxHeight = 500;
                                   });
                                 } else {
                                   setState(() {
-                                    _errorMsg = '';
-                                    _stepNumber++;
-                                    _panelMaxHeight = 500;
+                                    _stepNumber--;
+                                    _panelMaxHeight = 300;
                                   });
                                 }
-                              } else {
-                                setState(() {
-                                  _errorMsg = '';
-                                  _stepNumber++;
-                                  _panelMaxHeight = 500;
-                                });
-                              }
-                            } else if (_stepNumber == 1 &&
-                                _datePicker == true) {
-                              setState(() {
-                                _stepNumber++;
-                                _panelMaxHeight = 500;
-                              });
-                            } else {
-                              setState(() {
-                                _errorMsg = '';
-                                _stepNumber++;
-                                _panelMaxHeight = 300;
-                              });
-                            }
-                          }
-                        },
-                        child: Text(
-                          'Next',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
+                              },
+                              child: Text(
+                                'Back',
+                                style: TextStyle(color: Color(0xFF00a3e0)),
+                              )),
+                      _stepNumber == 3
+                          ? RaisedButton(
+                              color: Color(0xFF00a3e0),
+                              onPressed: () {
+                                _isLoading ? null : _handleNewTask();
+                              },
+                              child: _isLoading
+                                  ? Container(
+                                      width: 20,
+                                      height: 20,
+                                      child: new CircularProgressIndicator(
+                                        backgroundColor: Color(0xFF02a1e2),
+                                      ),
+                                    )
+                                  : Text(
+                                      'Save',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                            )
+                          : RaisedButton(
+                              color: Color(0xFF00a3e0),
+                              onPressed: () {
+                                if (_stepNumber != 3) {
+                                  if (titleController.text.isEmpty) {
+                                    setState(() {
+                                      _errorMsg = 'Event name required';
+                                    });
+                                  } else if (_stepNumber == 2) {
+                                    if (_datePicker == false) {
+                                      if (_todayClicked == false &&
+                                          _tomorrowClicked == false &&
+                                          _nextWeekClicked == false) {
+                                        setState(() {
+                                          _errorMsg = 'Please pick date';
+                                        });
+                                      } else {
+                                        setState(() {
+                                          _errorMsg = '';
+                                          _stepNumber++;
+                                          _panelMaxHeight = 500;
+                                        });
+                                      }
+                                    } else {
+                                      setState(() {
+                                        _errorMsg = '';
+                                        _stepNumber++;
+                                        _panelMaxHeight = 500;
+                                      });
+                                    }
+                                  } else if (_stepNumber == 1 &&
+                                      _datePicker == true) {
+                                    setState(() {
+                                      _stepNumber++;
+                                      _panelMaxHeight = 500;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      _errorMsg = '';
+                                      _stepNumber++;
+                                      _panelMaxHeight = 300;
+                                    });
+                                  }
+                                }
+                              },
+                              child: Text(
+                                'Next',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
                     ],
                   )),
             ],
@@ -285,14 +341,17 @@ class _AddEventPanelState extends State<AddEventPanel>
         child: ListView(
           shrinkWrap: true,
           children: [
-            Text(
-              _errorMsg,
-              style: TextStyle(color: Colors.redAccent),
-              textAlign: TextAlign.center,
+            Container(
+              margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+              child: Text(
+                _errorMsg,
+                style: TextStyle(color: Colors.redAccent),
+                textAlign: TextAlign.center,
+              ),
             ),
             if (_stepNumber == 1)
               Container(
-                margin: EdgeInsets.only(top: 10, left: 20, right: 20),
+                margin: EdgeInsets.only(top: 50, left: 20, right: 20),
                 child: TextField(
                   autofocus: false,
                   controller: titleController,
@@ -315,50 +374,8 @@ class _AddEventPanelState extends State<AddEventPanel>
                     hintText: 'Event name',
                     contentPadding: EdgeInsets.zero,
                     hintStyle:
-                    TextStyle(fontSize: 18, color: Color(0xffdadada)),
+                        TextStyle(fontSize: 18, color: Color(0xffdadada)),
                   ),
-                ),
-              ),
-            if (_stepNumber == 1)
-              Container(
-                margin: EdgeInsets.only(top: 5),
-                padding:
-                EdgeInsets.only(left: 22, right: 22, bottom: 15, top: 7),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                        height: 100,
-                        width: MediaQuery.of(context).size.width / 1.1,
-                        child: MaterialColorPicker(
-                          onMainColorChange: (color) {
-                            setState(() {
-                              _color = color;
-                            });
-                          },
-                          selectedColor: _color,
-                          allowShades: false,
-                          circleSize: 30,
-                          elevation: 0,
-                          colors: [
-                            Colors.deepOrange,
-                            Colors.yellow,
-                            Colors.lightGreen,
-                            Colors.redAccent,
-                            Colors.pink,
-                            Colors.brown,
-                            Colors.blueGrey,
-                            Colors.tealAccent,
-                            Colors.lime,
-                            Colors.purple,
-                            Colors.lightGreenAccent,
-                            Colors.grey,
-                            Colors.green,
-                            Colors.blue
-                          ],
-                        ))
-                  ],
                 ),
               ),
             if (_stepNumber == 2 && _datePicker == true)
@@ -366,7 +383,7 @@ class _AddEventPanelState extends State<AddEventPanel>
                 children: [
                   Container(
                     padding:
-                    EdgeInsets.only(left: 22, right: 22, bottom: 0, top: 0),
+                        EdgeInsets.only(left: 22, right: 22, bottom: 0, top: 0),
                     child: Row(
                       children: [
                         Container(
@@ -385,7 +402,7 @@ class _AddEventPanelState extends State<AddEventPanel>
                     child: Theme(
                         data: ThemeData.from(
                             colorScheme:
-                            ColorScheme.light(primary: Color(0xFF00a3e0))),
+                                ColorScheme.light(primary: Color(0xFF00a3e0))),
                         child: CalendarDatePicker(
                           initialCalendarMode: DatePickerMode.day,
                           initialDate: _start_date,
@@ -403,13 +420,12 @@ class _AddEventPanelState extends State<AddEventPanel>
                   ),
                 ],
               ),
-
             if (_stepNumber == 3 && _datePicker == true)
               Column(
                 children: [
                   Container(
                     padding:
-                    EdgeInsets.only(left: 22, right: 22, bottom: 0, top: 0),
+                        EdgeInsets.only(left: 22, right: 22, bottom: 0, top: 0),
                     child: Row(
                       children: [
                         Container(
@@ -428,7 +444,7 @@ class _AddEventPanelState extends State<AddEventPanel>
                     child: Theme(
                         data: ThemeData.from(
                             colorScheme:
-                            ColorScheme.light(primary: Color(0xFF00a3e0))),
+                                ColorScheme.light(primary: Color(0xFF00a3e0))),
                         child: CalendarDatePicker(
                           initialCalendarMode: DatePickerMode.day,
                           initialDate: _end_date,

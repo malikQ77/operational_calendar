@@ -87,160 +87,313 @@ class _MonthWidgetState extends State<MonthWidget> {
                                             onTap: () {
                                               Navigator.of(context).push(
                                                   RoutesHandler.route(
-                                                      DayInfo.DayInfo(week.days[i] , widget.month.number)));
+                                                      DayInfo.DayInfo(
+                                                          week.days[i],
+                                                          widget
+                                                              .month.number)));
                                             },
-                                            child: week.days[i].date == null ? SizedBox(width: 40, height: 35,) : week.days[i].type == 'Normal' ? Container(
-                                              decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.only(
-                                                    topLeft: Radius.circular(8.0),
-                                                  ),
-                                                  color: Color(0xffdadada)),
-                                              padding: EdgeInsets.only(left: 1, top: 1),
-                                              width: 40,
-                                              height: 35,
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.only(
-                                                    topLeft: Radius.circular(8.0),
-                                                    topRight: Radius.circular(0.0),
-                                                    bottomRight: Radius.circular(0.0),
-                                                    bottomLeft: Radius.circular(0),
-                                                  ),
-                                                  color: Color(week.days[i].bgColor),
-                                                ),
-                                                padding: EdgeInsets.only(left: 5, right: 6.5),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: [
-                                                    Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        Text(
-                                                          week.days[i].date.toString().padLeft(2, '0'),
-                                                          style: TextStyle(
-                                                              fontSize: 15,
-                                                              fontWeight: FontWeight.w600,
-                                                              color: week.days[i].type == 'RescheduledDaysOff' ||
-                                                                  week.days[i].type == 'Holidays' ||
-                                                                  week.days[i].type == 'NationalDay' ||
-                                                                  week.days[i].type == 'RamadanDay'
-                                                                  ? Colors.white
-                                                                  : Colors.black87),
+                                            child: week.days[i].date == null
+                                                ? SizedBox(
+                                                    width: 40,
+                                                    height: 35,
+                                                  )
+                                                : week.days[i].type == 'Normal'
+                                                    ? Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .only(
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                          8.0),
+                                                                ),
+                                                                color: Color(
+                                                                    0xffdadada)),
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 1,
+                                                                top: 1),
+                                                        width: 40,
+                                                        height: 35,
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .only(
+                                                              topLeft: Radius
+                                                                  .circular(
+                                                                      8.0),
+                                                              topRight: Radius
+                                                                  .circular(
+                                                                      0.0),
+                                                              bottomRight:
+                                                                  Radius
+                                                                      .circular(
+                                                                          0.0),
+                                                              bottomLeft: Radius
+                                                                  .circular(0),
+                                                            ),
+                                                            color: Color(week
+                                                                .days[i]
+                                                                .bgColor),
+                                                          ),
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 5,
+                                                                  right: 6.5),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                    week.days[i]
+                                                                        .date
+                                                                        .toString()
+                                                                        .padLeft(
+                                                                            2,
+                                                                            '0'),
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            15,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w600,
+                                                                        color: week.days[i].type == 'RescheduledDaysOff' ||
+                                                                                week.days[i].type == 'Holidays' ||
+                                                                                week.days[i].type == 'NationalDay' ||
+                                                                                week.days[i].type == 'RamadanDay'
+                                                                            ? Colors.white
+                                                                            : Colors.black87),
+                                                                  ),
+                                                                  Text(
+                                                                    week.days[i]
+                                                                        .H_date
+                                                                        .toString()
+                                                                        .padLeft(
+                                                                            2,
+                                                                            '0'),
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            11,
+                                                                        color: week.days[i].type == 'RescheduledDaysOff' ||
+                                                                                week.days[i].type == 'Holidays' ||
+                                                                                week.days[i].type == 'NationalDay' ||
+                                                                                week.days[i].type == 'RamadanDay'
+                                                                            ? Colors.white
+                                                                            : Color(week.days[i].txColor)),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Container(
+                                                                height: 25,
+                                                                width: 5,
+                                                                child: Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceEvenly,
+                                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                                  children: [
+                                                                    Container(
+                                                                        width:
+                                                                            4,
+                                                                        height:
+                                                                            4,
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          borderRadius:
+                                                                          BorderRadius.circular(2),
+                                                                          color: week.days[i].events.isEmpty
+                                                                              ? Color(week.days[i].bgColor)
+                                                                              : Color(week.days[i].events[0].eventColor),
+                                                                        )),
+                                                                    Container(
+                                                                        width:
+                                                                            4,
+                                                                        height:
+                                                                            4,
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          borderRadius:
+                                                                          BorderRadius.circular(2),
+                                                                          color: week.days[i].tasks.isEmpty
+                                                                              ? Color(week.days[i].bgColor)
+                                                                              : Color(week.days[i].tasks[0].taskColor),
+                                                                        )),
+                                                                    Container(
+                                                                        width:
+                                                                            4,
+                                                                        height:
+                                                                            4,
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(2),
+                                                                          color: week.days[i].reminders.isEmpty
+                                                                              ? Color(week.days[i].bgColor)
+                                                                              : Color(week.days[i].reminders[0].reminderColor),
+                                                                        )),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
-                                                        Text(
-                                                          week.days[i].H_date.toString().padLeft(2, '0'),
-                                                          style: TextStyle(
-                                                              fontSize: 11,
-                                                              color: week.days[i].type == 'RescheduledDaysOff' ||
-                                                                  week.days[i].type == 'Holidays' ||
-                                                                  week.days[i].type == 'NationalDay' ||
-                                                                  week.days[i].type == 'RamadanDay'
-                                                                  ? Colors.white
-                                                                  : Color(week.days[i].txColor)),
+                                                      )
+                                                    : Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius.only(
+                                                            topLeft:
+                                                                Radius.circular(
+                                                                    8.0),
+                                                            topRight:
+                                                                Radius.circular(
+                                                                    8.0),
+                                                            bottomRight:
+                                                                Radius.circular(
+                                                                    8.0),
+                                                          ),
+                                                          color: Color(week
+                                                              .days[i].bgColor),
                                                         ),
-                                                      ],
-                                                    ),
-                                                    Container(
-                                                      height: 25,
-                                                      width: 2,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius: BorderRadius.only(
-                                                          topLeft: Radius.circular(2.0),
-                                                          topRight: Radius.circular(2.0),
-                                                          bottomRight: Radius.circular(2.0),
-                                                          bottomLeft: Radius.circular(2.0),
+                                                        width: 40,
+                                                        height: 35,
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 5,
+                                                                right: 6.5),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                  week.days[i]
+                                                                      .date
+                                                                      .toString()
+                                                                      .padLeft(
+                                                                          2,
+                                                                          '0'),
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      color: week.days[i].type == 'RescheduledDaysOff' ||
+                                                                              week.days[i].type ==
+                                                                                  'Holidays' ||
+                                                                              week.days[i].type ==
+                                                                                  'NationalDay' ||
+                                                                              week.days[i].type ==
+                                                                                  'RamadanDay'
+                                                                          ? Colors
+                                                                              .white
+                                                                          : Colors
+                                                                              .black87),
+                                                                ),
+                                                                Text(
+                                                                  week.days[i]
+                                                                      .H_date
+                                                                      .toString()
+                                                                      .padLeft(
+                                                                          2,
+                                                                          '0'),
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          11,
+                                                                      color: week.days[i].type == 'RescheduledDaysOff' ||
+                                                                              week.days[i].type ==
+                                                                                  'Holidays' ||
+                                                                              week.days[i].type ==
+                                                                                  'NationalDay' ||
+                                                                              week.days[i].type ==
+                                                                                  'RamadanDay'
+                                                                          ? Colors
+                                                                              .white
+                                                                          : Color(week
+                                                                              .days[i]
+                                                                              .txColor)),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            Container(
+                                                              height: 25,
+                                                              width: 5,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Color(week.days[i].bgColor),
+                                                              ),
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceEvenly,
+                                                                children: [
+                                                                  Container(
+                                                                      width: 4,
+                                                                      height: 4,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(2),
+                                                                        color: week.days[i].events.isEmpty
+                                                                            ? Color(week.days[i].bgColor)
+                                                                            : Color(week.days[i].events[0].eventColor),
+                                                                      )),
+                                                                  Container(
+                                                                      width: 4,
+                                                                      height: 4,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(2),
+                                                                        color: week.days[i].tasks.isEmpty
+                                                                            ? Color(week.days[i].bgColor)
+                                                                            : Color(week.days[i].tasks[0].taskColor),
+                                                                      )),
+                                                                  Container(
+                                                                      width: 4,
+                                                                      height: 4,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(2),
+                                                                        color: week.days[i].reminders.isEmpty
+                                                                            ? Color(week.days[i].bgColor)
+                                                                            : Color(week.days[i].reminders[0].reminderColor),
+                                                                      )),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
-                                                        color: week.days[i].reminders.isEmpty &&
-                                                            week.days[i].tasks.isEmpty &&
-                                                            week.days[i].events.isEmpty
-                                                            ? Color(week.days[i].bgColor)
-                                                            : week.days[i].events.isNotEmpty
-                                                            ? Color(week.days[i].events[0].eventColor)
-                                                            : week.days[i].tasks.isNotEmpty
-                                                            ? Color(week.days[i].tasks[0].taskColor)
-                                                            : week.days[i].reminders.isNotEmpty
-                                                            ? Color(
-                                                            week.days[i].reminders[0].reminderColor)
-                                                            : Color(week.days[i].bgColor),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ) : Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(8.0),
-                                                  topRight: Radius.circular(8.0),
-                                                  bottomRight: Radius.circular(8.0),
-                                                ),
-                                                color: Color(week.days[i].bgColor),
-                                              ),
-                                              width: 40,
-                                              height: 35,
-                                              padding: EdgeInsets.only(left: 5, right: 6.5),
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  Column(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text(
-                                                        week.days[i].date.toString().padLeft(2, '0'),
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            fontWeight: FontWeight.w600,
-                                                            color: week.days[i].type == 'RescheduledDaysOff' ||
-                                                                week.days[i].type == 'Holidays' ||
-                                                                week.days[i].type == 'NationalDay' ||
-                                                                week.days[i].type == 'RamadanDay'
-                                                                ? Colors.white
-                                                                : Colors.black87),
-                                                      ),
-                                                      Text(
-                                                        week.days[i].H_date.toString().padLeft(2, '0'),
-                                                        style: TextStyle(
-                                                            fontSize: 11,
-                                                            color: week.days[i].type == 'RescheduledDaysOff' ||
-                                                                week.days[i].type == 'Holidays' ||
-                                                                week.days[i].type == 'NationalDay' ||
-                                                                week.days[i].type == 'RamadanDay'
-                                                                ? Colors.white
-                                                                : Color(week.days[i].txColor)),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Container(
-                                                    height: 25,
-                                                    width: 2,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.only(
-                                                        topLeft: Radius.circular(2.0),
-                                                        topRight: Radius.circular(2.0),
-                                                        bottomRight: Radius.circular(2.0),
-                                                        bottomLeft: Radius.circular(2.0),
-                                                      ),
-                                                      color: week.days[i].reminders.isEmpty &&
-                                                          week.days[i].tasks.isEmpty &&
-                                                          week.days[i].events.isEmpty
-                                                          ? Color(week.days[i].bgColor)
-                                                          : week.days[i].events.isNotEmpty
-                                                          ? Color(week.days[i].events[0].eventColor)
-                                                          : week.days[i].tasks.isNotEmpty
-                                                          ? Color(week.days[i].tasks[0].taskColor)
-                                                          : week.days[i].reminders.isNotEmpty
-                                                          ? Color(
-                                                          week.days[i].reminders[0].reminderColor)
-                                                          : Color(week.days[i].bgColor),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
                                           ),
                                       ],
                                     ),

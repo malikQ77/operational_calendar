@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "29869082931",
+    "project_id": "aramco-operational-calendar",
+    "storage_bucket": "aramco-operational-calendar.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:29869082931:android:4e773951e41697210a9646",
+        "android_client_info": {
+          "package_name": "com.example.aramco_calendar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "29869082931-65j3tlb1md3bdjejk1bpigf3qidcsbtv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9vqRBvnmUDgbZJJ8kTtTMT-ZvphWCWDI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "29869082931-65j3tlb1md3bdjejk1bpigf3qidcsbtv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
