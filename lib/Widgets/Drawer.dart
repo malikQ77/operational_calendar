@@ -3,13 +3,12 @@ import 'package:aramco_calendar/CoreFunctions/DatesFunctions.dart' as DatesFunct
 import 'package:aramco_calendar/Widgets/Login.dart' as Login;
 import 'package:aramco_calendar/Widgets/home.dart' as Home;
 import 'package:aramco_calendar/Routes/routesHandler.dart' as RoutesHandler;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_session/flutter_session.dart';
 final Shader linearGradient = LinearGradient(
   colors: <Color>[const Color(0xFF84bd00), const Color(0xFF00a3e0)],
 ).createShader(Rect.fromLTWH(0.0, 0.0, 80.0, 70.0));
 
 Widget build(context){
-
   return Drawer(
     child: ListView(
       padding: EdgeInsets.zero,
@@ -148,10 +147,8 @@ Widget build(context){
             ],
           ),
           onTap: ()  async {
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            prefs.setBool('is_login', false);
-            prefs.setString('user_id', null);
-
+            FlutterSession().set('is_login', false);
+            FlutterSession().set('user_id', 0);
             Navigator.pop(context);
             Navigator.of(context).push(RoutesHandler.route(Home.HomePage()));
           },

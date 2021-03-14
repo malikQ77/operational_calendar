@@ -28,7 +28,16 @@ class PushNotification {
 }
 
 Future<void> main() async {
+
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SharedPreferences prefs = await SharedPreferences.getInstance();
+  // var email = prefs.get('user_id');
+  // print(email);
+
+
   runApp(Calendar());
+
+
   FirebaseMessaging _messaging = FirebaseMessaging();
   await Firebase.initializeApp();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -50,16 +59,15 @@ Future<void> main() async {
     var platform = new NotificationDetails(android, iOS);
     await flutterLocalNotificationsPlugin.show(
         0, message["notification"]["title"], message["notification"]["body"], platform,
-        payload: 'Welcome to the Local Notification demo');
-    // Parse the message received
+        payload: null);
     PushNotification notification = PushNotification.fromJson(message);
-    print(notification);
+
   });
 
-  SharedPreferences.setMockInitialValues({});
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  prefs.setString('user_id', null);
-  prefs.setBool('is_login', false);
+  // SharedPreferences.setMockInitialValues({});
+  // SharedPreferences prefs = await SharedPreferences.getInstance();
+  // prefs.setString('user_id', null);
+  // prefs.setBool('is_login', false);
 
   _messaging.getToken().then((token) {
     print('Token: $token');

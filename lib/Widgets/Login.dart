@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:aramco_calendar/Api/DatesApi.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_session/flutter_session.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:aramco_calendar/Widgets/home.dart' as Home;
 import 'package:aramco_calendar/Routes/routesHandler.dart' as RoutesHandler;
@@ -40,16 +41,14 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
     };
     var res = await CallApi().postData(data, 'api/login');
     var body = json.decode(res.body);
-    SharedPreferences.setMockInitialValues({});
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     if (body['success']) {
-      prefs.setString('user_id', body['data']['id'].toString());
-      prefs.setBool('is_login', body['success']);
+      await FlutterSession().set("user_id", body['data']['id']);
+      await FlutterSession().set("is_login", body['success']);
       Navigator.of(context)
           .push(RoutesHandler.route(Home.HomePage()));
     } else {
-      print(body);
-      prefs.setBool('is_login', body['success']);
+      await FlutterSession().set("user_id", 0);
+      await FlutterSession().set("is_login", body['success']);
     }
   }
   @override

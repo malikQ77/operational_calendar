@@ -220,6 +220,7 @@ class _MonthWidgetState extends State<MonthWidget> {
                                                                               ? Color(week.days[i].bgColor)
                                                                               : Color(week.days[i].events[0].eventColor),
                                                                         )),
+
                                                                     Container(
                                                                         width:
                                                                             4,

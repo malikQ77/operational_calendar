@@ -2,6 +2,7 @@ import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:aramco_calendar/Widgets/Login.dart' as Login;
 import 'package:aramco_calendar/Routes/routesHandler.dart' as RoutesHandler;
+import 'package:flutter_session/flutter_session.dart';
 
 class FloatingActionButton extends StatefulWidget {
   Function callback_FloatingActionButton;
@@ -18,13 +19,24 @@ class _FloatingActionButtonState extends State<FloatingActionButton>  with Singl
   AnimationController _animationController;
 
   bool _isBubbleClicked = false;
-  bool _isLogin = true;
+  bool _isLogin = false;
   bool _showAddTask = false;
   bool _showAddEvent = false;
   bool _showAddReminder = false;
 
   @override
   void initState() {
+
+
+    FlutterSession().get("is_login").then((value){
+      if(value != null){
+        _isLogin = value;
+      }else{
+        _isLogin = false;
+      }
+    });
+
+
     _animationController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 200),
@@ -33,6 +45,9 @@ class _FloatingActionButtonState extends State<FloatingActionButton>  with Singl
     final curvedAnimation =
     CurvedAnimation(curve: Curves.slowMiddle, parent: _animationController);
     _animation = Tween<double>(begin: 0, end: 1).animate(curvedAnimation);
+
+
+
 
     super.initState();
   }

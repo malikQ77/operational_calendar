@@ -5,6 +5,7 @@ import 'package:aramco_calendar/CoreFunctions/DatesFunctions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
+import 'package:flutter_session/flutter_session.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:intl/intl.dart';
@@ -65,6 +66,7 @@ class _AddReminderPanelState extends State<AddReminderPanel>
   bool _reminderAdded = false;
   bool _isLoading = false;
 
+  int _user_id = 0;
   @override
   dispose() {
     titleController.dispose(); // you need this
@@ -84,6 +86,15 @@ class _AddReminderPanelState extends State<AddReminderPanel>
 
     flutterLocalNotificationsPlugin.initialize(initSetttings,
         onSelectNotification: null);
+
+
+    FlutterSession().get("user_id").then((value){
+      if(value != null){
+        _user_id = value;
+      }else{
+        _user_id = 0;
+      }
+    });
   }
 
   // Future onSelectNotification(String payload) {
@@ -179,9 +190,10 @@ class _AddReminderPanelState extends State<AddReminderPanel>
         _isLoading = true;
       });
 
-      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+
       var data = {
-        'user_id': int.parse(prefs.get('user_id')),
+        'user_id': _user_id,
         'reminder_name': titleController.text,
         'reminder_date': _date.toString(),
         'reminder_time': _time.toString(),

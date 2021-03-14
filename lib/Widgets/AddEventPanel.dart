@@ -5,6 +5,7 @@ import 'package:aramco_calendar/CoreFunctions/DatesFunctions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
+import 'package:flutter_session/flutter_session.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:intl/intl.dart';
@@ -49,6 +50,7 @@ class _AddEventPanelState extends State<AddEventPanel>
   bool _eventAdded = false;
   bool _isLoading = false;
 
+  int _user_id = 0;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -62,6 +64,14 @@ class _AddEventPanelState extends State<AddEventPanel>
 
     flutterLocalNotificationsPlugin.initialize(initSetttings,
         onSelectNotification: null);
+
+    FlutterSession().get("user_id").then((value){
+      if(value != null){
+        _user_id = value;
+      }else{
+        _user_id = 0;
+      }
+    });
   }
 
   Future<void> scheduleNotification() async {
@@ -78,9 +88,6 @@ class _AddEventPanelState extends State<AddEventPanel>
         .add(Duration(hours: int.parse(hour), minutes: int.parse(min)))
         .subtract(Duration(days: 1))
         .toLocal();
-
-    print(scheduledNotificationStartDateTime);
-    print(scheduledNotificationEndDateTime);
 
     var android = AndroidNotificationDetails('id', 'channel ', 'description',
         priority: Priority.High, importance: Importance.Max);
@@ -156,9 +163,8 @@ class _AddEventPanelState extends State<AddEventPanel>
       setState(() {
         _isLoading = true;
       });
-      SharedPreferences prefs = await SharedPreferences.getInstance();
       var data = {
-        'user_id': int.parse(prefs.get('user_id')),
+        'user_id': _user_id,
         'event_name': titleController.text,
         'event_start_date': _start_date.toString(),
         'event_end_date': _end_date.toString(),

@@ -5,6 +5,7 @@ import 'package:aramco_calendar/CoreFunctions/DatesFunctions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
+import 'package:flutter_session/flutter_session.dart';
 import 'package:intl/intl.dart';
 
 import 'package:aramco_calendar/Widgets/AppBar.dart' as AppBar;
@@ -29,6 +30,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class HomePage extends StatefulWidget {
   final String title;
 
+
   HomePage({Key key, this.title}) : super(key: key);
 
   @override
@@ -45,7 +47,7 @@ class _HomePageState extends State<HomePage>
 
   bool _isLogin = false;
 
-  String _user_id = null;
+  int _user_id = 0;
 
   dynamic FloatingActionButtonAndBubbles;
   dynamic AddTaskPanelWidget;
@@ -90,6 +92,22 @@ class _HomePageState extends State<HomePage>
         AddEventPanel.AddEventPanel(this.callback_AddEventPanel);
     AddReminderPanelWidget =
         AddReminderPanel.AddReminderPanel(this.callback_AddReminderPanel);
+
+
+    FlutterSession().get("is_login").then((value){
+      if(value != null){
+          _isLogin = value;
+      }else{
+          _isLogin = false;
+      }
+    });
+    FlutterSession().get("user_id").then((value){
+      if(value != null){
+        _user_id = value;
+      }else{
+        _user_id = 0;
+      }
+    });
     super.initState();
   }
 
@@ -99,12 +117,10 @@ class _HomePageState extends State<HomePage>
         var res = await CallApi().getData('getDates');
         var body = json.decode(res.body);
 
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        print(prefs.getBool('is_login'));
-        prefs.reload();
-        if(prefs.getBool('is_login')){
+
+        if(_isLogin == true){
           var data = {
-            'id': int.parse(prefs.get('user_id')),
+            'id': _user_id,
           };
           var userTasksRes = await CallApi().postData(data, 'api/getUserTasks');
           var TasksBody = json.decode(userTasksRes.body);
