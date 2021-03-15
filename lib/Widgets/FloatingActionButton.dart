@@ -66,7 +66,7 @@ class _FloatingActionButtonState extends State<FloatingActionButton>  with Singl
         Bubble(
           title: "Reminder",
           iconColor: Colors.white,
-          bubbleColor: Color(0xFF00a3e0),
+          bubbleColor: Colors.indigo,
           icon: Icons.timer_rounded,
           titleStyle: TextStyle(fontSize: 12, color: Colors.white),
           onPress: () {
@@ -87,7 +87,7 @@ class _FloatingActionButtonState extends State<FloatingActionButton>  with Singl
         Bubble(
           title: "Task",
           iconColor: Colors.white,
-          bubbleColor: Color(0xFF00a3e0),
+          bubbleColor: Colors.purple,
           icon: Icons.assignment_turned_in_outlined,
           titleStyle: TextStyle(
             fontSize: 12,
@@ -109,7 +109,7 @@ class _FloatingActionButtonState extends State<FloatingActionButton>  with Singl
         Bubble(
           title: "Event",
           iconColor: Colors.white,
-          bubbleColor: Color(0xFF00a3e0),
+          bubbleColor: Colors.deepOrange,
           icon: Icons.event_outlined,
           titleStyle: TextStyle(fontSize: 12, color: Colors.white),
           onPress: () {

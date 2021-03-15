@@ -4,6 +4,13 @@ import 'package:aramco_calendar/Widgets/DayInfo.dart' as DayInfo;
 import 'package:aramco_calendar/Routes/routesHandler.dart' as RoutesHandler;
 
 import 'package:aramco_calendar/Widgets/Login.dart' as Login;
+
+
+/*
+    Not used any more
+    - moved to month.dart
+ */
+
 class DayWidget extends StatefulWidget {
   final dynamic day;
 

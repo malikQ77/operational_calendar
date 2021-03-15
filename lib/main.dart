@@ -4,35 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:delayed_display/delayed_display.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'Widgets/home.dart' as Home;
 import 'Routes/routesHandler.dart' as RoutesHandler;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'Models/PushNotification.dart' as PushNotification;
 
 
-class PushNotification {
-  PushNotification({
-    this.title,
-    this.body,
-  });
-
-  String title;
-  String body;
-
-  factory PushNotification.fromJson(Map<String, dynamic> json) {
-    return PushNotification(
-      title: json["notification"]["title"],
-      body: json["notification"]["body"],
-    );
-  }
-}
 
 Future<void> main() async {
-
-  // WidgetsFlutterBinding.ensureInitialized();
-  // SharedPreferences prefs = await SharedPreferences.getInstance();
-  // var email = prefs.get('user_id');
-  // print(email);
 
 
   runApp(Calendar());
@@ -51,7 +30,6 @@ Future<void> main() async {
   flutterLocalNotificationsPlugin.initialize(initSetttings,
       onSelectNotification: null);
   _messaging.configure(onMessage: (message) async {
-    print('onMessage received: $message');
 
     var android = AndroidNotificationDetails('id', 'channel ', 'description',
         priority: Priority.High, importance: Importance.Max);
@@ -60,20 +38,16 @@ Future<void> main() async {
     await flutterLocalNotificationsPlugin.show(
         0, message["notification"]["title"], message["notification"]["body"], platform,
         payload: null);
-    PushNotification notification = PushNotification.fromJson(message);
+    PushNotification.PushNotification notification = PushNotification.PushNotification.fromJson(message);
 
   });
-
-  // SharedPreferences.setMockInitialValues({});
-  // SharedPreferences prefs = await SharedPreferences.getInstance();
-  // prefs.setString('user_id', null);
-  // prefs.setBool('is_login', false);
 
   _messaging.getToken().then((token) {
     print('Token: $token');
   }).catchError((e) {
     print(e);
   });
+
 }
 
 class Calendar extends StatelessWidget {
