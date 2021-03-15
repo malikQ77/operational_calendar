@@ -61,7 +61,7 @@ class _FloatingActionButtonState extends State<FloatingActionButton>  with Singl
   Widget build(BuildContext context) {
     return new FloatingActionBubble(
       // Menu items
-      isBubbleClicked: _isBubbleClicked,
+      // isBubbleClicked: _isBubbleClicked,
       items: <Bubble>[
         Bubble(
           title: "Reminder",
